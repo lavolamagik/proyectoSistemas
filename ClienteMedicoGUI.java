@@ -45,14 +45,14 @@ public class ClienteMedicoGUI extends ClienteGUI {
         JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
 
         // Botón que dice comunicar con medico
-        JButton comunicarMedico = new JButton("Comunicar con Administrativo");
-        comunicarMedico.addActionListener(new ActionListener() {
+        JButton comunicarAdministrativo = new JButton("Comunicar con Administrativo");
+        comunicarAdministrativo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //comunicarConMedico();
+                //comunicarAdministrativo();
             }
         });
-        buttonPanel.add(comunicarMedico);
+        buttonPanel.add(comunicarAdministrativo);
 
         // Botón que dice solicitar personal auxiliar
         JButton solicitarAuxiliar = new JButton("Solicitar Personal Auxiliar");

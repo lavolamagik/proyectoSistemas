@@ -19,7 +19,15 @@ public class HiloDeCliente implements Runnable {
             clientes.add(this);
 
             // Obtener un nombre único para el usuario
-            nombreUsuario = "Cliente" + clientes.size();
+            if(perfil.equals("medico")){
+                nombreUsuario = "Medico" + clientes.size();
+            }
+            else if (perfil.equals("administrativo")){
+                nombreUsuario = "Administrativo" + clientes.size();
+            }
+            else if(perfil.equals("Admin")){
+                nombreUsuario = "Admin";
+            }
             enviarListaUsuarios();
         } catch (Exception e) {
             e.printStackTrace();

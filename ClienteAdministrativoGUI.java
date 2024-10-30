@@ -49,10 +49,11 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
         comunicarMedico.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //comunicarConMedico();
+            JOptionPane.showMessageDialog(frame, new JScrollPane(medicoList), "Lista de Medicos", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         buttonPanel.add(comunicarMedico);
+
 
         // Botón que dice solicitar personal auxiliar
         JButton solicitarAuxiliar = new JButton("Solicitar Personal Auxiliar");
@@ -80,15 +81,24 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
     // Método para enviar un mensaje privado al usuario seleccionado
     private void enviarMensaje() {
         String mensaje = textField.getText();
-        String usuarioSeleccionado = administrativoList.getSelectedValue();
+        String medicoSeleccionado = medicoList.getSelectedValue();
+        String administrativoSeleccionado = administrativoList.getSelectedValue();
         
-        if (usuarioSeleccionado != null) {
+        if (medicoSeleccionado != null) {
             try {
-                dataOutput.writeUTF("@" + usuarioSeleccionado + ":" + mensaje); // Mensaje privado
+                dataOutput.writeUTF("@" + medicoSeleccionado + ":" + mensaje); // Mensaje privado
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else {
+        }
+        else if (administrativoSeleccionado != null) {
+            try {
+                dataOutput.writeUTF("@" + administrativoSeleccionado + ":" + mensaje); // Mensaje privado
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } 
+        else {
             try {
                 dataOutput.writeUTF(mensaje); // Mensaje general
             } catch (Exception ex) {
