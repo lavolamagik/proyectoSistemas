@@ -5,23 +5,20 @@ import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
-public class ClienteChatGUI {
-    private JFrame frame;
-    private JTextArea textArea;
-    private JTextField textField;
-    private JButton sendButton;
-    private JList<String> userList; // Lista para mostrar los usuarios conectados
-    private DefaultListModel<String> userListModel;
-    private DataOutputStream dataOutput;
+public class ClienteAdministrativoGUI extends ClienteGUI {
 
-    public ClienteChatGUI(Socket socket) {
+
+    public ClienteAdministrativoGUI(Socket socket) {
+        super(socket);
         try {
             dataOutput = new DataOutputStream(socket.getOutputStream());
+            medicoListModel = new DefaultListModel<>();
+            medicoList = new JList<>(medicoListModel);
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        frame = new JFrame("Chat de Cliente");
+        frame = new JFrame("Chat de Administrativo");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -38,10 +35,36 @@ public class ClienteChatGUI {
         frame.add(inputPanel, BorderLayout.SOUTH);
 
         // Configurar la lista de usuarios
-        userListModel = new DefaultListModel<>();
-        userList = new JList<>(userListModel);
-        frame.add(new JScrollPane(userList), BorderLayout.WEST);
-        
+        JLabel label = new JLabel("Adminitrativos Disponibles");
+        frame.add(label, BorderLayout.NORTH);
+        administrativoListModel = new DefaultListModel<>();
+        administrativoList = new JList<>(administrativoListModel);
+        frame.add(new JScrollPane(administrativoList), BorderLayout.WEST);
+
+        // Panel para los botones adicionales
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+
+        // Botón que dice comunicar con medico
+        JButton comunicarMedico = new JButton("Comunicar con Medico");
+        comunicarMedico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //comunicarConMedico();
+            }
+        });
+        buttonPanel.add(comunicarMedico);
+
+        // Botón que dice solicitar personal auxiliar
+        JButton solicitarAuxiliar = new JButton("Solicitar Personal Auxiliar");
+        solicitarAuxiliar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            //solicitarPersonalAuxiliar();
+            }
+        });
+        buttonPanel.add(solicitarAuxiliar);
+
+        frame.add(buttonPanel, BorderLayout.EAST);
         frame.setVisible(true);
 
         // Acción para enviar mensaje
@@ -53,17 +76,11 @@ public class ClienteChatGUI {
         });
     }
 
-    // Método para agregar un usuario a la lista
-    public void agregarUsuario(String usuario) {
-        if (!userListModel.contains(usuario)) {
-            userListModel.addElement(usuario);
-        }
-    }
 
     // Método para enviar un mensaje privado al usuario seleccionado
     private void enviarMensaje() {
         String mensaje = textField.getText();
-        String usuarioSeleccionado = userList.getSelectedValue();
+        String usuarioSeleccionado = administrativoList.getSelectedValue();
         
         if (usuarioSeleccionado != null) {
             try {
@@ -82,8 +99,5 @@ public class ClienteChatGUI {
         textField.setText("");
     }
 
-    // Método para mostrar mensajes en el área de texto
-    public void mostrarMensaje(String mensaje) {
-        textArea.append(mensaje + "\n");
-    }
+
 }

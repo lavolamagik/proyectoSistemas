@@ -9,9 +9,11 @@ public class HiloDeCliente implements Runnable {
     private DataInputStream dataInput;
     private DataOutputStream dataOutput;
     private String nombreUsuario;
+    private String perfil;
 
-    public HiloDeCliente(Socket socket) {
+    public HiloDeCliente(Socket socket,  String perfil) {
         try {
+            this.perfil = perfil;
             dataInput = new DataInputStream(socket.getInputStream());
             dataOutput = new DataOutputStream(socket.getOutputStream());
             clientes.add(this);
@@ -56,9 +58,18 @@ public class HiloDeCliente implements Runnable {
 
     // Método para enviar la lista de usuarios a cada cliente
     private void enviarListaUsuarios() {
+        StringBuilder listaUsuarios = new StringBuilder("#usuarios:");
+        for (HiloDeCliente cliente : clientes) {
+            listaUsuarios.append(cliente.nombreUsuario).append(",").append(cliente.perfil).append(";"); // Añadir el perfil a la lista
+        }
+        // Eliminar la última coma
+        if (listaUsuarios.length() > 0) {
+            listaUsuarios.setLength(listaUsuarios.length() - 1);
+        }
+        // Enviar la lista a todos los clientes
         for (HiloDeCliente cliente : clientes) {
             try {
-                cliente.dataOutput.writeUTF("#usuarios:" + nombreUsuario);
+                cliente.dataOutput.writeUTF(listaUsuarios.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
