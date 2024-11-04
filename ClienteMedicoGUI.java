@@ -91,7 +91,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
             }
         } else {
             try {
-                dataOutput.writeUTF(mensaje); // Mensaje general
+                dataOutput.writeUTF("/Medico:" +mensaje); // Mensaje general
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

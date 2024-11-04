@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import modelos.Administrativo;
 import modelos.Usuario;
 
 import java.awt.*;
@@ -37,47 +38,54 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
         
         frame.add(inputPanel, BorderLayout.SOUTH);
 
-        // Configurar la lista de usuarios
-        JLabel label = new JLabel("Adminitrativos Disponibles");
-        frame.add(label, BorderLayout.NORTH);
+        Administrativo administrativo = (Administrativo) usuario;
         administrativoListModel = new DefaultListModel<>();
         administrativoList = new JList<>(administrativoListModel);
-        frame.add(new JScrollPane(administrativoList), BorderLayout.WEST);
 
-        // Panel para los botones adicionales
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+        if(!administrativo.esAuxiliar()){
+            // Configurar la lista de usuarios
+            JLabel label = new JLabel("Adminitrativos Disponibles");
+            frame.add(label, BorderLayout.NORTH);
+            
+            frame.add(new JScrollPane(administrativoList), BorderLayout.WEST);
 
-        // Botón que dice comunicar con medico
-        JButton comunicarMedico = new JButton("Comunicar con Medico");
-        comunicarMedico.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(frame, new JScrollPane(medicoList), "Lista de Medicos", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        buttonPanel.add(comunicarMedico);
+            // Panel para los botones adicionales
+            JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+
+            // Botón que dice comunicar con medico
+            JButton comunicarMedico = new JButton("Comunicar con Médico");
+            comunicarMedico.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, new JScrollPane(medicoList), "Lista de Medicos", JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
+            buttonPanel.add(comunicarMedico);
 
 
-        // Botón que dice solicitar personal auxiliar
-        JButton solicitarAuxiliar = new JButton("Solicitar Personal Auxiliar");
-        solicitarAuxiliar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                desplegarSolicitarPersonalAuxiliar();
-            }
-        });
-        buttonPanel.add(solicitarAuxiliar);
+            // Botón que dice solicitar personal auxiliar
+            JButton solicitarAuxiliar = new JButton("Solicitar Personal Auxiliar");
+            solicitarAuxiliar.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    desplegarSolicitarPersonalAuxiliar();
+                }
+            });
+            buttonPanel.add(solicitarAuxiliar);
 
-        frame.add(buttonPanel, BorderLayout.EAST);
-        frame.setVisible(true);
+            frame.add(buttonPanel, BorderLayout.EAST);
+            
 
-        // Acción para enviar mensaje
+
+        }  
+                    // Acción para enviar mensaje
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 enviarMensaje();
             }
         });
+        frame.setVisible(true);
     }
 
 
@@ -103,7 +111,13 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
         } 
         else {
             try {
-                dataOutput.writeUTF(mensaje); // Mensaje general
+                //mensaje que seleccione un usuario
+                Administrativo administrativo = (Administrativo) usuario;
+                if(administrativo.esAuxiliar()){
+                    dataOutput.writeUTF(mensaje); // Mensaje general
+                }else{
+                    JOptionPane.showMessageDialog(frame, "Seleccione un usuario", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
