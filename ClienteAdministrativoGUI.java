@@ -63,7 +63,7 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
         solicitarAuxiliar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            //solicitarPersonalAuxiliar();
+                desplegarSolicitarPersonalAuxiliar();
             }
         });
         buttonPanel.add(solicitarAuxiliar);
