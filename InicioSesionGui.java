@@ -42,7 +42,7 @@ public class InicioSesionGui {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         frame = new JFrame("Inicio de Sesión");
         frame.setSize(300, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +81,7 @@ public class InicioSesionGui {
     private void iniciarSesion() {
         Usuario[] usuarios = new Usuario[6];
         usuarios[0] = new Admin("admin", "admin", "admin");
-        usuarios[1] = new Medico("medico","0", "medico@correo.com", "12345");
+        usuarios[1] = new Medico("medico", "0", "medico@correo.com", "12345");
         usuarios[2] = new Medico("medico2", "0", "medico2@correo.com", "12345");
         usuarios[3] = new Administrativo("administrativo", "0", "administrativo@correo.com", "12345", Area.ADMISION);
         usuarios[4] = new Administrativo("administrativo2", "0", "administrativo2@correo.com", "12345", Area.ADMISION);
@@ -108,5 +108,5 @@ public class InicioSesionGui {
     public Usuario getUsuario() {
         return usuario;
     }
-    
+
 }
