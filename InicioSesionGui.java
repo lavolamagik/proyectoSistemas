@@ -79,19 +79,23 @@ public class InicioSesionGui {
     }
 
     private void iniciarSesion() {
+        Usuario[] usuarios = new Usuario[6];
+        usuarios[0] = new Admin("admin", "admin", "admin");
+        usuarios[1] = new Medico("medico","0", "medico@correo.com", "12345");
+        usuarios[2] = new Medico("medico2", "0", "medico2@correo.com", "12345");
+        usuarios[3] = new Administrativo("administrativo", "0", "administrativo@correo.com", "12345", Area.ADMISION);
+        usuarios[4] = new Administrativo("administrativo2", "0", "administrativo2@correo.com", "12345", Area.ADMISION);
+
+
         String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());
 
         // Si el usuario y la contraseña son correctos, abrir la ventana correspondiente
-        if (correo.equals("admin@correo.com") && contrasena.equals("admin")) {
-            this.usuario = new Admin("admin", "admin@correo.com", "admin");
-        } else if (correo.equals("medico@correo.com") && contrasena.equals("medico")) {
-            this.usuario = new Medico("medico","0", "medico@correo.com", "medico");
-        } else if (correo.equals("administrativo@correo.com") && contrasena.equals("administrativo")) {
-            this.usuario = new Administrativo("administrativo", "000", "administrativo@correo.com", "administrativo", Area.ADMISION);
-        } else {
-            JOptionPane.showMessageDialog(frame, "Correo o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
-            this.usuario = null;
+        for (Usuario usuario : usuarios) {
+            if (usuario.getCorreo().equals(correo) && usuario.getClave().equals(contrasena)) {
+                this.usuario = usuario;
+                break;
+            }
         }
 
         // Cerrar ventana después de iniciar sesión
