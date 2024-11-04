@@ -61,7 +61,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
         solicitarAuxiliar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            //solicitarPersonalAuxiliar();
+                desplegarSolicitarPersonalAuxiliar();
             }
         });
         buttonPanel.add(solicitarAuxiliar);
@@ -116,6 +116,36 @@ public class ClienteMedicoGUI extends ClienteGUI {
             public void actionPerformed(ActionEvent e) {
                 try {
                     dataOutput.writeUTF("/Administrativo:" + mensajeField.getText());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                mensajeField.setText("");
+                dialogo.dispose(); // Cierra el diálogo después de enviar el mensaje
+            }
+        });
+
+        dialogo.setLocationRelativeTo(frame); // Centra el diálogo en la ventana principal
+        dialogo.setVisible(true); // Muestra el diálogo
+
+
+    }
+
+    public void desplegarSolicitarPersonalAuxiliar() {
+        JDialog dialogo = new JDialog(frame, "Solicitar Personal Auxiliar", true);
+        dialogo.setSize(300, 150);
+        dialogo.setLayout(new BorderLayout());
+
+        JTextField mensajeField = new JTextField();
+        JButton enviarButton = new JButton("Enviar");
+
+        dialogo.add(mensajeField, BorderLayout.CENTER);
+        dialogo.add(enviarButton, BorderLayout.SOUTH);
+
+        enviarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    dataOutput.writeUTF("/Auxiliar:" + mensajeField.getText());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
