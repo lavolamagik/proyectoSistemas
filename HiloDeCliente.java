@@ -48,7 +48,21 @@ public class HiloDeCliente implements Runnable {
                             break;
                         }
                     }
-                } else {
+                }
+                else if(mensaje.startsWith("/")) {
+                    String[] partes = mensaje.split(":", 2);
+                    String destinatario = partes[0].substring(1); // Obtener destinatario
+                    String mensajeGrupo = partes[1];
+
+                    for (HiloDeCliente cliente : clientes) {
+                        System.out.println("Cliente clase: "+cliente.usuario.getClass().getSimpleName());
+                        System.out.println("Destinatario: "+destinatario);
+                        if (cliente.usuario.getClass().getSimpleName().equals(destinatario)) {
+                            cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
+                        }
+                    }
+                }
+                else {
                     // Enviar mensaje general a todos
                     for (HiloDeCliente cliente : clientes) {
                         cliente.dataOutput.writeUTF(correoUsuario() + ": " + mensaje);

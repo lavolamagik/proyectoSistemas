@@ -39,10 +39,10 @@ public class ClienteMedicoGUI extends ClienteGUI {
         // Configurar la lista de usuarios
         JLabel label = new JLabel("Medicos Disponibles");
         frame.add(label, BorderLayout.NORTH);
+        String ultimoSeleccionado = null;
         medicoListModel = new DefaultListModel<>();
         medicoList = new JList<>(medicoListModel);
         frame.add(new JScrollPane(medicoList), BorderLayout.WEST);
-        
 
         // Panel para los botones adicionales
         JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
@@ -52,7 +52,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
         comunicarAdministrativo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //comunicarAdministrativo();
+                comunicarAdministrativo();
             }
         });
         buttonPanel.add(comunicarAdministrativo);
@@ -97,8 +97,40 @@ public class ClienteMedicoGUI extends ClienteGUI {
                 ex.printStackTrace();
             }
         }
-        
+        medicoList.clearSelection();
         textField.setText("");
     }
+
+    public void comunicarAdministrativo() {
+        JDialog dialogo = new JDialog(frame, "Comunicar con Administrativo", true);
+        dialogo.setSize(300, 150);
+        dialogo.setLayout(new BorderLayout());
+
+        JTextField mensajeField = new JTextField();
+        JButton enviarButton = new JButton("Enviar");
+
+        dialogo.add(mensajeField, BorderLayout.CENTER);
+        dialogo.add(enviarButton, BorderLayout.SOUTH);
+
+        enviarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    dataOutput.writeUTF("/Administrativo:" + mensajeField.getText());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                mensajeField.setText("");
+                dialogo.dispose(); // Cierra el diálogo después de enviar el mensaje
+            }
+        });
+
+        dialogo.setLocationRelativeTo(frame); // Centra el diálogo en la ventana principal
+        dialogo.setVisible(true); // Muestra el diálogo
+
+
+    }
+
+    
     
 }
