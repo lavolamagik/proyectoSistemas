@@ -1,0 +1,3 @@
+yanko, 12345
+rodrigo, 12345
+admin, password
