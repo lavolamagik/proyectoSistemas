@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import modelos.Usuario;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,8 +11,8 @@ import java.net.Socket;
 public class ClienteAdministrativoGUI extends ClienteGUI {
 
 
-    public ClienteAdministrativoGUI(Socket socket) {
-        super(socket);
+    public ClienteAdministrativoGUI(Socket socket, Usuario usuario) {
+        super(socket, usuario);
         try {
             dataOutput = new DataOutputStream(socket.getOutputStream());
             medicoListModel = new DefaultListModel<>();
@@ -18,7 +21,7 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
             e.printStackTrace();
         }
         
-        frame = new JFrame("Chat de Administrativo");
+        frame = new JFrame("Chat de " + usuario.getNombre());
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
