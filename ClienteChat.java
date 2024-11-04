@@ -3,12 +3,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import modelos.Admin;
+import modelos.Administrativo;
+import modelos.Medico;
+import modelos.Usuario;
+
 public class ClienteChat {
     private ClienteGUI gui;
     private Socket socket;
     private DataInputStream dataInput;
     private DataOutputStream dataOutput;
-    private String perfil;
+    private Usuario usuario;
 
     public ClienteChat() {
         try {
@@ -21,24 +26,25 @@ public class ClienteChat {
             
             InicioSesionGui inicioSesion = new InicioSesionGui(socket);
             //recibir perfil de InicioSesionGui
-            while (inicioSesion.getPerfil() == null || inicioSesion.getPerfil().isEmpty()) {
+            while (inicioSesion.getUsuario() == null) {
                 Thread.sleep(100);  // Esperar brevemente
             }
-            perfil = inicioSesion.getPerfil();
-
-            if(this.perfil.equals("medico")){
+            usuario = inicioSesion.getUsuario();
+            System.out.println(usuario);
+            System.out.println(usuario.getClass());
+            System.out.println(Medico.class);
+            if(this.usuario.getClass() == Medico.class){
                 gui = new ClienteMedicoGUI(socket);
             }
-            else if (this.perfil.equals("administrativo")){
-                gui = new ClienteAdministrativoGUI(socket);   
+            else if (this.usuario.getClass() == Administrativo.class){
+                gui = new ClienteAdministrativoGUI(socket);
             }
-            else if(this.perfil.equals("Admin")){
+            else if (this.usuario.getClass() == Admin.class){
                 gui = new ClienteAdminGUI(socket);
             }
                 
 
-
-            dataOutput.writeUTF(perfil);
+            dataOutput.writeUTF(usuario.toString());
 
             // Hilo para recibir mensajes
             new Thread(new Runnable() {
@@ -54,10 +60,10 @@ public class ClienteChat {
                                 String[] usuarios = mensaje.split(":")[1].split(";");
                                 for (String usuario : usuarios) {
                                     String[] partes = usuario.split(","); // Dividir nombre y perfil
-                                    if ( partes[1].equals("administrativo")) {
+                                    if ( partes[1].equals("Administrativo")){ 
                                         gui.agregarAdministrativo(partes[0]); 
                                     }
-                                    else if(partes[1].equals("medico")){
+                                    else if(partes[1].equals("Medico")){
                                         gui.agregarMedico(partes[0]);
                                     }
                                     

@@ -13,6 +13,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import modelos.Admin;
+import modelos.Usuario;
+import modelos.Medico;
+import modelos.Administrativo;
+import modelos.Area;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -27,7 +34,7 @@ public class InicioSesionGui {
     JTextField usuarioField;
     JPasswordField contrasenaField;
     DataOutputStream dataOutput;
-    String perfil;
+    Usuario usuario;
 
     public InicioSesionGui(Socket socket) {
         try {
@@ -77,28 +84,25 @@ public class InicioSesionGui {
 
         // Si el usuario y la contraseña son correctos, abrir la ventana correspondiente
         if (usuario.equals("admin") && contrasena.equals("admin")) {
-            perfil = "Admin";
-            //new ClienteAdminGUI(socket);
+            this.usuario = new Admin("admin", "admin", "admin");
         } else if (usuario.equals("medico") && contrasena.equals("medico")) {
-            perfil = "medico";
-            //new ClienteMedicoGUI(socket);
+            this.usuario = new Medico("medico","0", "medico", "medico");
         } else if (usuario.equals("administrativo") && contrasena.equals("administrativo")) {
-            perfil = "administrativo";
-            //new ClienteAdministrativoGUI(socket);
+            this.usuario = new Administrativo("administrativo", "000", "administrativo", "administrativo", Area.ADMISION);
         } else {
             JOptionPane.showMessageDialog(frame, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
-            perfil = "";
+            this.usuario = null;
         }
 
         // Cerrar ventana después de iniciar sesión
-        if (!perfil.isEmpty()) {
+        if (this.usuario != null) {
             frame.dispose();
         }
 
     }
 
-    public String getPerfil() {
-        return perfil;
+    public Usuario getUsuario() {
+        return usuario;
     }
     
 }
