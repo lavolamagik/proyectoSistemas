@@ -79,18 +79,18 @@ public class InicioSesionGui {
     }
 
     private void iniciarSesion() {
-        String usuario = usuarioField.getText();
+        String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());
 
         // Si el usuario y la contraseña son correctos, abrir la ventana correspondiente
-        if (usuario.equals("admin") && contrasena.equals("admin")) {
-            this.usuario = new Admin("admin", "admin", "admin");
-        } else if (usuario.equals("medico") && contrasena.equals("medico")) {
-            this.usuario = new Medico("medico","0", "medico", "medico");
-        } else if (usuario.equals("administrativo") && contrasena.equals("administrativo")) {
-            this.usuario = new Administrativo("administrativo", "000", "administrativo", "administrativo", Area.ADMISION);
+        if (correo.equals("admin@correo.com") && contrasena.equals("admin")) {
+            this.usuario = new Admin("admin", "admin@correo.com", "admin");
+        } else if (correo.equals("medico@correo.com") && contrasena.equals("medico")) {
+            this.usuario = new Medico("medico","0", "medico@correo.com", "medico");
+        } else if (correo.equals("administrativo@correo.com") && contrasena.equals("administrativo")) {
+            this.usuario = new Administrativo("administrativo", "000", "administrativo@correo.com", "administrativo", Area.ADMISION);
         } else {
-            JOptionPane.showMessageDialog(frame, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Correo o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
             this.usuario = null;
         }
 
