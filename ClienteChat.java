@@ -10,10 +10,22 @@ public class ClienteChat {
     private DataOutputStream dataOutput;
     private String perfil;
 
-    public ClienteChat(String perfil) {
+    public ClienteChat() {
         try {
-            this.perfil = perfil;
             socket = new Socket("localhost", 5000);
+            dataInput = new DataInputStream(socket.getInputStream());
+            dataOutput = new DataOutputStream(socket.getOutputStream());
+            
+
+            //this.perfil = perfil;
+            
+            InicioSesionGui inicioSesion = new InicioSesionGui(socket);
+            //recibir perfil de InicioSesionGui
+            while (inicioSesion.getPerfil() == null || inicioSesion.getPerfil().isEmpty()) {
+                Thread.sleep(100);  // Esperar brevemente
+            }
+            perfil = inicioSesion.getPerfil();
+
             if(this.perfil.equals("medico")){
                 gui = new ClienteMedicoGUI(socket);
             }
@@ -24,8 +36,7 @@ public class ClienteChat {
                 gui = new ClienteAdminGUI(socket);
             }
                 
-            dataInput = new DataInputStream(socket.getInputStream());
-            dataOutput = new DataOutputStream(socket.getOutputStream());
+
 
             dataOutput.writeUTF(perfil);
 
@@ -68,11 +79,7 @@ public class ClienteChat {
     }
 
     public static void main(String[] args) {
-        new ClienteChat("medico");
-        new ClienteChat("medico");
-        new ClienteChat("administrativo");
-        new ClienteChat("administrativo");
-        new ClienteChat("Admin");
+        new ClienteChat();
 
     }
 }
