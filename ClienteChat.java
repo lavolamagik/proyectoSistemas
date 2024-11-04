@@ -34,13 +34,13 @@ public class ClienteChat {
             System.out.println(usuario.getClass());
             System.out.println(Medico.class);
             if(this.usuario.getClass() == Medico.class){
-                gui = new ClienteMedicoGUI(socket);
+                gui = new ClienteMedicoGUI(socket, usuario);
             }
             else if (this.usuario.getClass() == Administrativo.class){
-                gui = new ClienteAdministrativoGUI(socket);
+                gui = new ClienteAdministrativoGUI(socket, usuario);
             }
             else if (this.usuario.getClass() == Admin.class){
-                gui = new ClienteAdminGUI(socket);
+                gui = new ClienteAdminGUI(socket, usuario);
             }
                 
 
@@ -58,8 +58,13 @@ public class ClienteChat {
                                 gui.limpiarListaUsuarios(); // Limpia la lista antes de agregar
                                 System.out.println(mensaje);
                                 String[] usuarios = mensaje.split(":")[1].split(";");
-                                for (String usuario : usuarios) {
-                                    String[] partes = usuario.split(","); // Dividir nombre y perfil
+                                for (String usuarioAgregar : usuarios) {
+                                    String[] partes = usuarioAgregar.split(","); // Dividir nombre y perfil
+
+                                    if(partes[0].equals(usuario.getCorreo())){
+                                        continue;
+                                    }
+                                
                                     if ( partes[1].equals("Administrativo")){ 
                                         gui.agregarAdministrativo(partes[0]); 
                                     }

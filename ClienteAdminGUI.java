@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import modelos.Usuario;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,8 +11,8 @@ import java.net.Socket;
 public class ClienteAdminGUI  extends ClienteGUI {
 
 
-    public ClienteAdminGUI(Socket socket) {
-        super(socket);
+    public ClienteAdminGUI(Socket socket, Usuario usuario) {
+        super(socket, usuario);
         try {
             dataOutput = new DataOutputStream(socket.getOutputStream());
             administrativoListModel = new DefaultListModel<>();

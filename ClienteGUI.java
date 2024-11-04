@@ -8,6 +8,8 @@ import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import modelos.Usuario;
+
 public class ClienteGUI {
 
     JFrame frame;
@@ -19,10 +21,12 @@ public class ClienteGUI {
     DefaultListModel<String> administrativoListModel;
     DataOutputStream dataOutput;
     DefaultListModel<String> medicoListModel;
+    Usuario usuario;
 
-    public ClienteGUI(Socket socket) {
+    public ClienteGUI(Socket socket, Usuario usuario) {
         try {
             dataOutput = new DataOutputStream(socket.getOutputStream());
+            this.usuario = usuario;
         } catch (Exception e) {
             e.printStackTrace();
         }
