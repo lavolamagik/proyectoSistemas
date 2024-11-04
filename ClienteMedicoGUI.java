@@ -39,7 +39,6 @@ public class ClienteMedicoGUI extends ClienteGUI {
         // Configurar la lista de usuarios
         JLabel label = new JLabel("Medicos Disponibles");
         frame.add(label, BorderLayout.NORTH);
-        String ultimoSeleccionado = null;
         medicoListModel = new DefaultListModel<>();
         medicoList = new JList<>(medicoListModel);
         frame.add(new JScrollPane(medicoList), BorderLayout.WEST);
@@ -52,7 +51,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
         comunicarAdministrativo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                comunicarAdministrativo();
+                desplegarcComunicarAdministrativo();
             }
         });
         buttonPanel.add(comunicarAdministrativo);
@@ -101,7 +100,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
         textField.setText("");
     }
 
-    public void comunicarAdministrativo() {
+    public void desplegarcComunicarAdministrativo() {
         JDialog dialogo = new JDialog(frame, "Comunicar con Administrativo", true);
         dialogo.setSize(300, 150);
         dialogo.setLayout(new BorderLayout());

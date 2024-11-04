@@ -85,7 +85,7 @@ public class InicioSesionGui {
         usuarios[2] = new Medico("medico2", "0", "medico2@correo.com", "12345");
         usuarios[3] = new Administrativo("administrativo", "0", "administrativo@correo.com", "12345", Area.ADMISION);
         usuarios[4] = new Administrativo("administrativo2", "0", "administrativo2@correo.com", "12345", Area.ADMISION);
-
+        usuarios[5] = new Administrativo("administrativo3", "0", "administrativo3@correo.com", "12345", Area.AUXILIAR);
 
         String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());

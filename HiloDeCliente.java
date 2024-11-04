@@ -57,7 +57,17 @@ public class HiloDeCliente implements Runnable {
                     for (HiloDeCliente cliente : clientes) {
                         System.out.println("Cliente clase: "+cliente.usuario.getClass().getSimpleName());
                         System.out.println("Destinatario: "+destinatario);
+                        System.out.println("Cliente: "+cliente.usuario);
                         if (cliente.usuario.getClass().getSimpleName().equals(destinatario)) {
+                            System.out.println("Cliente2: "+cliente.usuario);
+                            if(destinatario.equals("Administrativo")){
+                                Administrativo administrativo = (Administrativo) cliente.usuario;
+                                System.out.println("Administrativo: "+ administrativo);
+                                if(administrativo.esAuxiliar()){
+                                    continue;
+                                }
+                            }
+                        
                             cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
                         }
                     }
