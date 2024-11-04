@@ -4,30 +4,26 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import modelos.Usuario;
+import modelos.Admin;
+import modelos.Administrativo;
+import modelos.Medico;
+
 public class HiloDeCliente implements Runnable {
     private static ArrayList<HiloDeCliente> clientes = new ArrayList<>();
     private DataInputStream dataInput;
     private DataOutputStream dataOutput;
-    private String nombreUsuario;
-    private String perfil;
+    private Usuario usuario;
 
-    public HiloDeCliente(Socket socket,  String perfil) {
+    public HiloDeCliente(Socket socket,  Usuario usuario) {
         try {
-            this.perfil = perfil;
+            this.usuario = usuario;
+            System.out.println("Usuario: " + usuario);
+            System.out.println("Clase: " + usuario.getClass().getName());
             dataInput = new DataInputStream(socket.getInputStream());
             dataOutput = new DataOutputStream(socket.getOutputStream());
             clientes.add(this);
 
-            // Obtener un nombre único para el usuario
-            if(perfil.equals("medico")){
-                nombreUsuario = "Medico" + clientes.size();
-            }
-            else if (perfil.equals("administrativo")){
-                nombreUsuario = "Administrativo" + clientes.size();
-            }
-            else if(perfil.equals("Admin")){
-                nombreUsuario = "Admin";
-            }
             enviarListaUsuarios();
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,15 +43,15 @@ public class HiloDeCliente implements Runnable {
                     String mensajePrivado = partes[1];
 
                     for (HiloDeCliente cliente : clientes) {
-                        if (cliente.nombreUsuario.equals(destinatario)) {
-                            cliente.dataOutput.writeUTF("[Privado de " + nombreUsuario + "]: " + mensajePrivado);
+                        if (cliente.correoUsuario().equals(destinatario)) {
+                            cliente.dataOutput.writeUTF("[Privado de " + correoUsuario() + "]: " + mensajePrivado);
                             break;
                         }
                     }
                 } else {
                     // Enviar mensaje general a todos
                     for (HiloDeCliente cliente : clientes) {
-                        cliente.dataOutput.writeUTF(nombreUsuario + ": " + mensaje);
+                        cliente.dataOutput.writeUTF(correoUsuario() + ": " + mensaje);
                     }
                 }
             }
@@ -68,7 +64,7 @@ public class HiloDeCliente implements Runnable {
     private void enviarListaUsuarios() {
         StringBuilder listaUsuarios = new StringBuilder("#usuarios:");
         for (HiloDeCliente cliente : clientes) {
-            listaUsuarios.append(cliente.nombreUsuario).append(",").append(cliente.perfil).append(";"); // Añadir el perfil a la lista
+            listaUsuarios.append(cliente.correoUsuario()).append(",").append(cliente.usuario.getClass().getSimpleName()).append(";"); // Añadir el usuario a la lista
         }
         // Eliminar la última coma
         if (listaUsuarios.length() > 0) {
@@ -82,5 +78,9 @@ public class HiloDeCliente implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String correoUsuario() {
+        return usuario.getCorreo();
     }
 }
