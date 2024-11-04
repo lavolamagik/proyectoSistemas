@@ -70,6 +70,14 @@ public class HiloDeCliente implements Runnable {
                         
                             cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
                         }
+                        else if(destinatario.equals("Auxiliar")){
+                            if(cliente.usuario.getClass().getSimpleName().equals("Administrativo")){
+                                Administrativo administrativo = (Administrativo) cliente.usuario;
+                                if(administrativo.esAuxiliar()){
+                                    cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
+                                }
+                            }
+                        }
                     }
                 }
                 else {
