@@ -8,6 +8,14 @@ public class Administrativo extends Perfil{
         this.area = area;
     }
 
+    public Area getArea() {
+        return area;
+    }
+
+    public boolean esAuxiliar() {
+        return this.area == Area.AUXILIAR;
+    }
+
     @Override
     public String toString() {
         return "Administrativo: " + this.nombre + ", " + this.rut + ", " + this.correo + ", " + this.clave + ", " + this.area;

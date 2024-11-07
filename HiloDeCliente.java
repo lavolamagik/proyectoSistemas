@@ -61,15 +61,32 @@ public class HiloDeCliente implements Runnable {
                     String mensajeGrupo = partes[1];
 
                     for (HiloDeCliente cliente : clientes) {
-                        System.out.println("Cliente clase: " + cliente.usuario.getClass().getSimpleName());
-                        System.out.println("Destinatario: " + destinatario);
+                        System.out.println("Cliente clase: "+cliente.usuario.getClass().getSimpleName());
+                        System.out.println("Destinatario: "+destinatario);
+                        System.out.println("Cliente: "+cliente.usuario);
                         if (cliente.usuario.getClass().getSimpleName().equals(destinatario)) {
+                            System.out.println("Cliente2: "+cliente.usuario);
                             String mensajeParaGuardar = correoUsuario() + " para grupo de " + destinatario + ": "
                                     + mensajeGrupo;
                             guardarMensaje("[ " + correoUsuario() + " para grupo de " + destinatario + "]: "
                                     + mensajeParaGuardar);
-                            cliente.dataOutput.writeUTF(
-                                    "[ " + correoUsuario() + " para grupo de " + destinatario + "]: " + mensajeGrupo);
+                            if(destinatario.equals("Administrativo")){
+                                Administrativo administrativo = (Administrativo) cliente.usuario;
+                                System.out.println("Administrativo: "+ administrativo);
+                                if(administrativo.esAuxiliar()){
+                                    continue;
+                                }
+                            }
+                        
+                            cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
+                        }
+                        else if(destinatario.equals("Auxiliar")){
+                            if(cliente.usuario.getClass().getSimpleName().equals("Administrativo")){
+                                Administrativo administrativo = (Administrativo) cliente.usuario;
+                                if(administrativo.esAuxiliar()){
+                                    cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
+                                }
+                            }
                         }
                     }
                 } else {
