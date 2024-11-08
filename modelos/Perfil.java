@@ -9,6 +9,6 @@ public class Perfil extends Usuario {
     }
 
     public String getRut() {
-        return this.rut;
+        return rut;
     }
 }

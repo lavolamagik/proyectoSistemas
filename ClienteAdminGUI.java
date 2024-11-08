@@ -112,7 +112,7 @@ public class ClienteAdminGUI extends ClienteGUI {
     public void mostrarFormularioCrearUsuario() {
         JDialog dialogo = new JDialog(frame, "Crear Nuevo Usuario", true);
         dialogo.setSize(400, 300);
-        dialogo.setLayout(new GridLayout(6, 2));
+        dialogo.setLayout(new GridLayout(10, 1));
 
         JTextField nombreField = new JTextField();
         JTextField rutField = new JTextField();
@@ -133,7 +133,10 @@ public class ClienteAdminGUI extends ClienteGUI {
         dialogo.add(perfilBox);
         dialogo.add(new JLabel("Área (Solo Administrativo):"));
         dialogo.add(areaBox);
-
+        perfilBox.addActionListener(e -> {
+            String perfilSeleccionado = (String) perfilBox.getSelectedItem();
+            areaBox.setEnabled("Administrativo".equals(perfilSeleccionado));
+        });
         JButton crearButton = new JButton("Crear");
         crearButton.addActionListener(e -> {
             String nombre = nombreField.getText();

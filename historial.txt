@@ -9,3 +9,4 @@ medico2@correo.com: ke pasa con el medico 1!!!
 [ medico2@correo.com para grupo de Administrativo]: medico2@correo.com para grupo de Administrativo: asds
 
 [ medico@correo.com para grupo de Medico]: medico@correo.com para grupo de Medico: cvcxcxv
+admin2: sdasdsad
