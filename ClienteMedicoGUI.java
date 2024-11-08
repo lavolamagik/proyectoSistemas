@@ -7,9 +7,11 @@ import modelos.Usuario;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.Socket;
-
 import java.awt.event.MouseAdapter;
 
 public class ClienteMedicoGUI extends ClienteGUI {
@@ -139,12 +141,14 @@ public class ClienteMedicoGUI extends ClienteGUI {
 
     // Método para abrir una ventana de chat privado
     public void abrirVentanaChatPrivado(String usuarioSeleccionado) {
+        cargarChatPrivado();
+
         JFrame ventanaChatPrivado = new JFrame("Chat con " + usuarioSeleccionado);
         ventanaChatPrivado.setSize(400, 300);
         ventanaChatPrivado.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Área de texto para mostrar mensajes del chat
-        JTextArea areaMensajes = new JTextArea();
+        JTextArea areaMensajes = chatPrivados.get(usuarioSeleccionado);
+
         areaMensajes.setEditable(false);
         ventanaChatPrivado.add(new JScrollPane(areaMensajes), BorderLayout.CENTER);
 
@@ -169,7 +173,36 @@ public class ClienteMedicoGUI extends ClienteGUI {
             }
         });
 
+        ventanaChatPrivado.setLocationRelativeTo(frame); // Centra la ventana de chat privado en la ventana principal
         ventanaChatPrivado.setVisible(true);
+    }
+
+    public void cargarChatPrivado() {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("mensajesPrivados.txt"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(",", 3);
+                if (partes.length == 3) {
+                    String remitente = partes[0];
+                    String destinatario = partes[1];
+                    String mensaje = partes[2];
+
+                    if(remitente.equals(usuario.getCorreo())){
+                        dataOutput.writeUTF("@" + destinatario + ":" + mensaje); // Enviar mensaje privado
+
+                        if (!chatPrivados.containsKey(destinatario)) {
+                            chatPrivados.put(destinatario, new JTextArea());
+                        }
+                        chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
+
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
