@@ -154,10 +154,18 @@ public class ClienteMedicoGUI extends ClienteGUI {
 
         JTextField campoMensajePrivado = new JTextField();
         JButton botonEnviarPrivado = new JButton("Enviar");
+        JButton botonLimpiar = new JButton("Limpiar");
 
         JPanel panelEntrada = new JPanel(new BorderLayout());
         panelEntrada.add(campoMensajePrivado, BorderLayout.CENTER);
         panelEntrada.add(botonEnviarPrivado, BorderLayout.EAST);
+    
+        // Agregar botón Limpiar al panel
+        JPanel panelBotones = new JPanel(new BorderLayout());
+        panelBotones.add(botonEnviarPrivado, BorderLayout.EAST);
+        panelBotones.add(botonLimpiar, BorderLayout.WEST);
+    
+        panelEntrada.add(panelBotones, BorderLayout.EAST);
         ventanaChatPrivado.add(panelEntrada, BorderLayout.SOUTH);
 
         botonEnviarPrivado.addActionListener(e -> {
@@ -173,6 +181,11 @@ public class ClienteMedicoGUI extends ClienteGUI {
             }
         });
 
+        botonLimpiar.addActionListener(e -> {
+            areaMensajes.setText(""); // Limpiar el área de mensajes
+            chatPrivados.put(usuarioSeleccionado, new JTextArea()); // Limpiar el chat privado
+        });
+
         ventanaChatPrivado.setLocationRelativeTo(frame); // Centra la ventana de chat privado en la ventana principal
         ventanaChatPrivado.setVisible(true);
     }
@@ -180,6 +193,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
     public void cargarChatPrivado() {
 
         try (BufferedReader reader = new BufferedReader(new FileReader("mensajesPrivados.txt"))) {
+            chatPrivados.clear();
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",", 3);
@@ -189,13 +203,16 @@ public class ClienteMedicoGUI extends ClienteGUI {
                     String mensaje = partes[2];
 
                     if(remitente.equals(usuario.getCorreo())){
-                        dataOutput.writeUTF("@" + destinatario + ":" + mensaje); // Enviar mensaje privado
-
                         if (!chatPrivados.containsKey(destinatario)) {
                             chatPrivados.put(destinatario, new JTextArea());
                         }
                         chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
-
+                    }
+                    else if(destinatario.equals(usuario.getCorreo())){
+                        if (!chatPrivados.containsKey(remitente)) {
+                            chatPrivados.put(remitente, new JTextArea());
+                        }
+                        chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
                     }
                 }
             }
