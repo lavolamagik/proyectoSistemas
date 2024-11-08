@@ -58,8 +58,8 @@ public class ServidorChat {
         // Agregar el usuario a la lista de usuarios del sistema
         usuarios.add(usuario);
 
-        // Guardar el usuario en un archivo para persistencia
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt", true))) {
+        // Guardar el usuario en un archivo CSV para persistencia
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.csv", true))) {
             writer.write(usuarioToString(usuario));
             writer.newLine();
             System.out.println("Usuario agregado y guardado: " + usuario.getCorreo());
@@ -71,16 +71,14 @@ public class ServidorChat {
     private static String usuarioToString(Usuario usuario) {
         if (usuario instanceof Medico) {
             Medico medico = (Medico) usuario;
-            return "Medico: " + medico.getNombre() + ", " + medico.getRut() + ", " + medico.getCorreo() + ", "
-                    + medico.getClave();
+            return "Medico," + medico.getNombre() + "," + medico.getRut() +"," + medico.getCorreo() +"," + medico.getClave();
         } else if (usuario instanceof Administrativo) {
             Administrativo administrativo = (Administrativo) usuario;
-            return "Administrativo: " + administrativo.getNombre() + ", " + administrativo.getRut() + ", "
-                    + administrativo.getCorreo() + ", "
-                    + administrativo.getClave() + ", " + administrativo.getArea();
+            return "Administrativo," + administrativo.getNombre() + "," + administrativo.getRut() +"," + administrativo.getCorreo() + ","
+                    + administrativo.getClave() + "," + administrativo.getArea();
         } else if (usuario instanceof Admin) {
             Admin admin = (Admin) usuario;
-            return "Admin: " + admin.getNombre() + ", " + admin.getCorreo() + ", " + admin.getClave();
+            return "Admin," + admin.getNombre() + "," + admin.getCorreo();
         }
         return "";
     }
