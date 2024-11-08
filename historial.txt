@@ -10,3 +10,8 @@ medico2@correo.com: ke pasa con el medico 1!!!
 
 [ medico@correo.com para grupo de Medico]: medico@correo.com para grupo de Medico: cvcxcxv
 admin2: sdasdsad
+[ medico@correo.com para grupo de Medico]: medico@correo.com para grupo de Medico: hola
+[ hola@gmail.com para grupo de Medico]: hola@gmail.com para grupo de Medico: hola nue
+[ medico@correo.com para grupo de Medico]: medico@correo.com para grupo de Medico: MENSAJE ALERTA
+[ medico@correo.com para grupo de Administrativo]: medico@correo.com para grupo de Administrativo: solicitamos reporte  paciente
+administrativo3@correo.com: loa

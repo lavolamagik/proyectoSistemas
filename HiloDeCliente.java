@@ -58,6 +58,21 @@ public class HiloDeCliente implements Runnable {
                         }
                     }
                 } else if (mensaje.startsWith("/")) {
+                    if(mensaje.startsWith("/Medico")){
+                        String[] partes = mensaje.split(":", 3);
+                        String destinatario = partes[1];
+                        String mensajePrivado = partes[2];
+                        for (HiloDeCliente cliente : clientes) {
+                            if (cliente.correoUsuario().equals(destinatario)) {
+                                String mensajeParaGuardar = correoUsuario() + ": " + mensajePrivado;
+                                System.out.println("Guardando mensaje: " + mensajeParaGuardar);
+                                //guardarMensaje("[Privado de " + correoUsuario() + "]: " + mensajeParaGuardar);
+                                guardarHashMap(correoUsuario(), destinatario, mensajePrivado);
+                                cliente.dataOutput.writeUTF("[Privado de " + correoUsuario() + "]: " + mensajePrivado);
+                                break;
+                            }
+                        }
+                    }
                     String[] partes = mensaje.split(":", 2);
                     String destinatario = partes[0].substring(1); // Obtener destinatario
                     String mensajeGrupo = partes[1];

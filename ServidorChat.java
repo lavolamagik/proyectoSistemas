@@ -78,7 +78,7 @@ public class ServidorChat {
                     + administrativo.getClave() + "," + administrativo.getArea();
         } else if (usuario instanceof Admin) {
             Admin admin = (Admin) usuario;
-            return "Admin," + admin.getNombre() + "," + admin.getCorreo();
+            return "Admin," + admin.getNombre() + "," + admin.getCorreo() + "," + admin.getClave();
         }
         return "";
     }
