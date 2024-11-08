@@ -1,6 +1,9 @@
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -35,6 +38,7 @@ public class InicioSesionGui {
     JPasswordField contrasenaField;
     DataOutputStream dataOutput;
     Usuario usuario;
+    Usuario[] usuarios;
 
     public InicioSesionGui(Socket socket) {
         try {
@@ -42,6 +46,8 @@ public class InicioSesionGui {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // cargar usuarios
+        usuarios = cargarUsuariosDesdeArchivo("c:\\Users\\rodri\\OneDrive\\Escritorio\\proyectoSistemas\\usuarios.txt");
 
         frame = new JFrame("Inicio de Sesión");
         frame.setSize(300, 200);
@@ -79,14 +85,6 @@ public class InicioSesionGui {
     }
 
     private void iniciarSesion() {
-        Usuario[] usuarios = new Usuario[6];
-        usuarios[0] = new Admin("admin", "admin", "admin");
-        usuarios[1] = new Medico("medico", "0", "medico@correo.com", "12345");
-        usuarios[2] = new Medico("medico2", "0", "medico2@correo.com", "12345");
-        usuarios[3] = new Administrativo("administrativo", "0", "administrativo@correo.com", "12345", Area.ADMISION);
-        usuarios[4] = new Administrativo("administrativo2", "0", "administrativo2@correo.com", "12345", Area.ADMISION);
-        usuarios[5] = new Administrativo("administrativo3", "0", "administrativo3@correo.com", "12345", Area.AUXILIAR);
-
         String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());
 
@@ -101,12 +99,43 @@ public class InicioSesionGui {
         // Cerrar ventana después de iniciar sesión
         if (this.usuario != null) {
             frame.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
         }
 
     }
 
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    // Método para cargar usuarios desde el archivo
+    private Usuario[] cargarUsuariosDesdeArchivo(String rutaArchivo) {
+        ArrayList<Usuario> usuariosList = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(": ");
+
+                if (partes.length > 1) {
+                    String tipo = partes[0];
+                    String[] datos = partes[1].split(", ");
+
+                    if (tipo.equals("Medico")) {
+                        usuariosList.add(new Medico(datos[0], "0", datos[1], datos[2]));
+                    } else if (tipo.equals("Administrativo")) {
+                        usuariosList.add(new Administrativo(datos[0], "0", datos[1], datos[2], Area.valueOf(datos[3])));
+                    } else if (tipo.equals("Admin")) {
+                        usuariosList.add(new Admin(datos[0], datos[1], datos[2]));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return usuariosList.toArray(new Usuario[0]);
     }
 
 }
