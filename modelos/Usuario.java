@@ -1,4 +1,5 @@
 package modelos;
+
 public class Usuario {
     String nombre;
     String correo;
@@ -20,6 +21,10 @@ public class Usuario {
 
     public String getClave() {
         return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 
     @Override
