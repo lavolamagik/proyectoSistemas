@@ -119,10 +119,12 @@ public class ClienteAdminGUI extends ClienteGUI {
         JTextField correoField = new JTextField();
         JTextField claveField = new JTextField();
         JComboBox<String> perfilBox = new JComboBox<>(new String[] { "Medico", "Administrativo", "Admin" });
-        JComboBox<String> areaBox = new JComboBox<>(new String[] { "Admisión", "Pabellón", "Exámenes", "Auxiliar" });
+        JComboBox<String> areaBox = new JComboBox<>(new String[] { "ADMISION", "PABELLON", "EXAMENES", "AUXILIAR" });
 
         dialogo.add(new JLabel("Nombre:"));
         dialogo.add(nombreField);
+        dialogo.add(new JLabel("Rut:"));
+        dialogo.add(rutField);
         dialogo.add(new JLabel("Correo:"));
         dialogo.add(correoField);
         dialogo.add(new JLabel("Clave:"));
@@ -136,6 +138,7 @@ public class ClienteAdminGUI extends ClienteGUI {
         crearButton.addActionListener(e -> {
             String nombre = nombreField.getText();
             String correo = correoField.getText();
+            String rut = rutField.getText();
             String clave = claveField.getText();
             String perfil = (String) perfilBox.getSelectedItem();
             String area = (String) areaBox.getSelectedItem();
@@ -143,11 +146,11 @@ public class ClienteAdminGUI extends ClienteGUI {
             // Crear usuario basado en el perfil seleccionado
             Usuario nuevoUsuario;
             if ("Medico".equals(perfil)) {
-                nuevoUsuario = new Medico(nombre, "0", correo, clave);
+                nuevoUsuario = new Medico(nombre, rut, correo, clave);
             } else if ("Administrativo".equals(perfil)) {
-                nuevoUsuario = new Administrativo(nombre, "0", correo, clave, Area.valueOf(area.toUpperCase()));
+                nuevoUsuario = new Administrativo(nombre, rut, correo, clave, Area.valueOf(area.toUpperCase()));
             } else {
-                nuevoUsuario = new Admin(nombre, "0", correo);
+                nuevoUsuario = new Admin(nombre, correo, clave);
             }
 
             // Agregar nuevo usuario al sistema
@@ -230,11 +233,12 @@ public class ClienteAdminGUI extends ClienteGUI {
                     String[] datos = partes[1].split(", ");
 
                     if (tipo.equals("Medico")) {
-                        usuariosList.add(new Medico(datos[0], "0", datos[1], datos[2]));
+                        usuariosList.add(new Medico(datos[0], datos[1], datos[2], datos[3]));
                     } else if (tipo.equals("Administrativo")) {
-                        usuariosList.add(new Administrativo(datos[0], "0", datos[1], datos[2], Area.valueOf(datos[3])));
+                        usuariosList.add(
+                                new Administrativo(datos[0], datos[1], datos[2], datos[3], Area.valueOf(datos[4])));
                     } else if (tipo.equals("Admin")) {
-                        usuariosList.add(new Admin(datos[0], "0", datos[1]));
+                        usuariosList.add(new Admin(datos[0], datos[1], datos[2]));
                     }
                 }
             }
@@ -246,7 +250,8 @@ public class ClienteAdminGUI extends ClienteGUI {
     }
 
     private void actualizarArchivoUsuarios(ArrayList<Usuario> usuariosList) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(
+                new FileWriter("c:\\Users\\rodri\\OneDrive\\Escritorio\\proyectoSistemas\\usuarios.txt"))) {
             for (Usuario usuario : usuariosList) {
                 writer.write(usuarioToString(usuario));
                 writer.newLine();
@@ -259,10 +264,12 @@ public class ClienteAdminGUI extends ClienteGUI {
     private String usuarioToString(Usuario usuario) {
         if (usuario instanceof Medico) {
             Medico medico = (Medico) usuario;
-            return "Medico: " + medico.getNombre() + "," + medico.getCorreo() + ", " + medico.getClave();
+            return "Medico: " + medico.getNombre() + ", " + medico.getRut() + ", " + medico.getCorreo() + ", "
+                    + medico.getClave();
         } else if (usuario instanceof Administrativo) {
             Administrativo administrativo = (Administrativo) usuario;
-            return "Administrativo: " + administrativo.getNombre() + ", " + administrativo.getCorreo() + ", "
+            return "Administrativo: " + administrativo.getNombre() + ", " + administrativo.getRut() + ", "
+                    + administrativo.getCorreo() + ", "
                     + administrativo.getClave() + ", " + administrativo.getArea();
         } else if (usuario instanceof Admin) {
             Admin admin = (Admin) usuario;

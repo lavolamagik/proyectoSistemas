@@ -7,4 +7,8 @@ public class Perfil extends Usuario {
         super(nombre, correo, clave);
         this.rut = rut;
     }
+
+    public String getRut() {
+        return this.rut;
+    }
 }

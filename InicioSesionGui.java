@@ -123,9 +123,10 @@ public class InicioSesionGui {
                     String[] datos = partes[1].split(", ");
 
                     if (tipo.equals("Medico")) {
-                        usuariosList.add(new Medico(datos[0], "0", datos[1], datos[2]));
+                        usuariosList.add(new Medico(datos[0], datos[1], datos[2], datos[3]));
                     } else if (tipo.equals("Administrativo")) {
-                        usuariosList.add(new Administrativo(datos[0], "0", datos[1], datos[2], Area.valueOf(datos[3])));
+                        usuariosList.add(
+                                new Administrativo(datos[0], datos[1], datos[2], datos[3], Area.valueOf(datos[4])));
                     } else if (tipo.equals("Admin")) {
                         usuariosList.add(new Admin(datos[0], datos[1], datos[2]));
                     }

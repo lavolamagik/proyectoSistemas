@@ -1,6 +1,6 @@
 package modelos;
 
-public class Administrativo extends Perfil{
+public class Administrativo extends Perfil {
     Area area;
 
     public Administrativo(String nombre, String rut, String correo, String clave, Area area) {
@@ -16,8 +16,13 @@ public class Administrativo extends Perfil{
         return this.area == Area.AUXILIAR;
     }
 
+    public String getRut() {
+        return this.rut;
+    }
+
     @Override
     public String toString() {
-        return "Administrativo: " + this.nombre + ", " + this.rut + ", " + this.correo + ", " + this.clave + ", " + this.area;
+        return "Administrativo: " + this.nombre + ", " + this.rut + ", " + this.correo + ", " + this.clave + ", "
+                + this.area;
     }
 }

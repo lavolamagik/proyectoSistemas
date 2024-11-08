@@ -6,6 +6,10 @@ public class Medico extends Perfil {
         super(nombre, rut, correo, clave);
     }
 
+    public String getRut() {
+        return this.rut;
+    }
+
     @Override
     public String toString() {
         return "Medico: " + this.nombre + ", " + this.rut + ", " + this.correo + ", " + this.clave;
