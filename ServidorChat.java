@@ -71,10 +71,10 @@ public class ServidorChat {
     private static String usuarioToString(Usuario usuario) {
         if (usuario instanceof Medico) {
             Medico medico = (Medico) usuario;
-            return "Medico," + medico.getNombre() + "," + medico.getCorreo() + "," + medico.getClave();
+            return "Medico," + medico.getNombre() + "," + medico.getRut() +"," + medico.getCorreo() +"," + medico.getClave();
         } else if (usuario instanceof Administrativo) {
             Administrativo administrativo = (Administrativo) usuario;
-            return "Administrativo," + administrativo.getNombre() + "," + administrativo.getCorreo() + ","
+            return "Administrativo," + administrativo.getNombre() + "," + administrativo.getRut() +"," + administrativo.getCorreo() + ","
                     + administrativo.getClave() + "," + administrativo.getArea();
         } else if (usuario instanceof Admin) {
             Admin admin = (Admin) usuario;
