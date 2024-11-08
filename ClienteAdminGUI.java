@@ -205,7 +205,7 @@ public class ClienteAdminGUI extends ClienteGUI {
     }
 
     private boolean cambiarClaveUsuario(String correo, String nuevaClave) {
-        ArrayList<Usuario> usuariosList = cargarUsuariosDesdeArchivo("usuarios.txt");
+        ArrayList<Usuario> usuariosList = cargarUsuariosDesdeArchivo("usuarios.csv");
         boolean encontrado = false;
 
         for (Usuario usuario : usuariosList) {
@@ -229,19 +229,17 @@ public class ClienteAdminGUI extends ClienteGUI {
         try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
-                String[] partes = linea.split(": ");
+                String[] partes = linea.split(",");
 
                 if (partes.length > 1) {
                     String tipo = partes[0];
-                    String[] datos = partes[1].split(", ");
 
                     if (tipo.equals("Medico")) {
-                        usuariosList.add(new Medico(datos[0], datos[1], datos[2], datos[3]));
+                        usuariosList.add(new Medico(partes[1], partes[2], partes[3], partes[4]));
                     } else if (tipo.equals("Administrativo")) {
-                        usuariosList.add(
-                                new Administrativo(datos[0], datos[1], datos[2], datos[3], Area.valueOf(datos[4])));
+                        usuariosList.add(new Administrativo(partes[2], partes[2], partes[3], partes[4], Area.valueOf(partes[5])));
                     } else if (tipo.equals("Admin")) {
-                        usuariosList.add(new Admin(datos[0], datos[1], datos[2]));
+                        usuariosList.add(new Admin(partes[1], partes[2], partes[3]));
                     }
                 }
             }
@@ -254,7 +252,7 @@ public class ClienteAdminGUI extends ClienteGUI {
 
     private void actualizarArchivoUsuarios(ArrayList<Usuario> usuariosList) {
         try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter("c:\\Users\\rodri\\OneDrive\\Escritorio\\proyectoSistemas\\usuarios.txt"))) {
+                new FileWriter("usuarios.csv"))) {
             for (Usuario usuario : usuariosList) {
                 writer.write(usuarioToString(usuario));
                 writer.newLine();
@@ -263,20 +261,18 @@ public class ClienteAdminGUI extends ClienteGUI {
             e.printStackTrace();
         }
     }
-
-    private String usuarioToString(Usuario usuario) {
+  
+    private static String usuarioToString(Usuario usuario) {
         if (usuario instanceof Medico) {
             Medico medico = (Medico) usuario;
-            return "Medico: " + medico.getNombre() + ", " + medico.getRut() + ", " + medico.getCorreo() + ", "
-                    + medico.getClave();
+            return "Medico," + medico.getNombre() + "," + medico.getRut() +"," + medico.getCorreo() +"," + medico.getClave();
         } else if (usuario instanceof Administrativo) {
             Administrativo administrativo = (Administrativo) usuario;
-            return "Administrativo: " + administrativo.getNombre() + ", " + administrativo.getRut() + ", "
-                    + administrativo.getCorreo() + ", "
-                    + administrativo.getClave() + ", " + administrativo.getArea();
+            return "Administrativo," + administrativo.getNombre() + "," + administrativo.getRut() +"," + administrativo.getCorreo() + ","
+                    + administrativo.getClave() + "," + administrativo.getArea();
         } else if (usuario instanceof Admin) {
             Admin admin = (Admin) usuario;
-            return "Admin: " + admin.getNombre() + ", " + admin.getCorreo() + ", " + admin.getClave();
+            return "Admin," + admin.getNombre() + "," + admin.getCorreo()+ "," + admin.getClave();
         }
         return "";
     }

@@ -104,7 +104,7 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
         }
         else if (administrativoSeleccionado != null) {
             try {
-                dataOutput.writeUTF("@" + administrativoSeleccionado + ":" + mensaje); // Mensaje privado
+                dataOutput.writeUTF("/Medico:" + administrativoSeleccionado + ":" + mensaje); // Mensaje privado
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
