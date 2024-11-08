@@ -1,7 +1,6 @@
-Medico: rodrigo, r@gmail.com, 12345
+Medico: rodrigo, r@gmail.com, 54321
 Medico: rodrigo, hola@gmail.com, 12345
-Admin: admin, admin, admin
+Admin: admin, 0, admin
 Medico: medico, medico@correo.com, 12345
 Medico: medico2, medico2@correo.com, 12345
 Administrativo: administrativo, administrativo@correo.com, 12345, ADMISION
-Admin: admin2, 0
