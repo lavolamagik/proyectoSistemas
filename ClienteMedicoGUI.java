@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+import java.awt.event.MouseEvent;
+
 import modelos.Usuario;
 
 import java.awt.*;
@@ -7,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.net.Socket;
+
+import java.awt.event.MouseAdapter;
 
 public class ClienteMedicoGUI extends ClienteGUI {
 
@@ -19,11 +23,11 @@ public class ClienteMedicoGUI extends ClienteGUI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         frame = new JFrame("Chat de " + usuario.getNombre());
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         textArea = new JTextArea();
         textArea.setEditable(false);
         frame.add(new JScrollPane(textArea), BorderLayout.CENTER);
@@ -33,7 +37,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
         sendButton = new JButton("Enviar");
         inputPanel.add(textField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
-        
+
         frame.add(inputPanel, BorderLayout.SOUTH);
 
         // Configurar la lista de usuarios
@@ -73,31 +77,22 @@ public class ClienteMedicoGUI extends ClienteGUI {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                enviarMensaje();
+                enviarMensajeGeneral();
             }
         });
-    }
 
-    // Método para enviar un mensaje privado al usuario seleccionado
-    private void enviarMensaje() {
-        String mensaje = textField.getText();
-        String usuarioSeleccionado = medicoList.getSelectedValue();
-        
-        if (usuarioSeleccionado != null) {
-            try {
-                dataOutput.writeUTF("@" + usuarioSeleccionado + ":" + mensaje); // Mensaje privado
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        // Doble clic en un usuario para abrir ventana de chat privado
+        medicoList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    String usuarioSeleccionado = medicoList.getSelectedValue();
+                    if (usuarioSeleccionado != null) {
+                        abrirVentanaChatPrivado(usuarioSeleccionado);
+                    }
+                }
             }
-        } else {
-            try {
-                dataOutput.writeUTF("/Medico:" +mensaje); // Mensaje general
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        medicoList.clearSelection();
-        textField.setText("");
+        });
     }
 
     public void desplegarcComunicarAdministrativo() {
@@ -127,9 +122,54 @@ public class ClienteMedicoGUI extends ClienteGUI {
         dialogo.setLocationRelativeTo(frame); // Centra el diálogo en la ventana principal
         dialogo.setVisible(true); // Muestra el diálogo
 
-
     }
 
-    
-    
+    // Método para enviar un mensaje general
+    private void enviarMensajeGeneral() {
+        String mensaje = textField.getText();
+        if (!mensaje.isEmpty()) {
+            try {
+                dataOutput.writeUTF("/Medico:" + mensaje); // Enviar mensaje general
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            textField.setText("");
+        }
+    }
+
+    // Método para abrir una ventana de chat privado
+    public void abrirVentanaChatPrivado(String usuarioSeleccionado) {
+        JFrame ventanaChatPrivado = new JFrame("Chat con " + usuarioSeleccionado);
+        ventanaChatPrivado.setSize(400, 300);
+        ventanaChatPrivado.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // Área de texto para mostrar mensajes del chat
+        JTextArea areaMensajes = new JTextArea();
+        areaMensajes.setEditable(false);
+        ventanaChatPrivado.add(new JScrollPane(areaMensajes), BorderLayout.CENTER);
+
+        JTextField campoMensajePrivado = new JTextField();
+        JButton botonEnviarPrivado = new JButton("Enviar");
+
+        JPanel panelEntrada = new JPanel(new BorderLayout());
+        panelEntrada.add(campoMensajePrivado, BorderLayout.CENTER);
+        panelEntrada.add(botonEnviarPrivado, BorderLayout.EAST);
+        ventanaChatPrivado.add(panelEntrada, BorderLayout.SOUTH);
+
+        botonEnviarPrivado.addActionListener(e -> {
+            String mensaje = campoMensajePrivado.getText().trim();
+            if (!mensaje.isEmpty()) {
+                try {
+                    dataOutput.writeUTF("@" + usuarioSeleccionado + ":" + mensaje); // Enviar mensaje privado
+                    areaMensajes.append("Tú: " + mensaje + "\n"); // Mostrar en la ventana privada
+                    campoMensajePrivado.setText("");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        ventanaChatPrivado.setVisible(true);
+    }
+
 }
