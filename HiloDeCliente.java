@@ -50,7 +50,9 @@ public class HiloDeCliente implements Runnable {
                     for (HiloDeCliente cliente : clientes) {
                         if (cliente.correoUsuario().equals(destinatario)) {
                             String mensajeParaGuardar = correoUsuario() + ": " + mensajePrivado;
-                            guardarMensaje("[Privado de " + correoUsuario() + "]: " + mensajeParaGuardar);
+                            System.out.println("Guardando mensaje: " + mensajeParaGuardar);
+                            //guardarMensaje("[Privado de " + correoUsuario() + "]: " + mensajeParaGuardar);
+                            guardarHashMap(correoUsuario(), destinatario, mensajePrivado);
                             cliente.dataOutput.writeUTF("[Privado de " + correoUsuario() + "]: " + mensajePrivado);
                             break;
                         }
@@ -137,6 +139,19 @@ public class HiloDeCliente implements Runnable {
 
     public String correoUsuario() {
         return usuario.getCorreo();
+    }
+
+    private void guardarHashMap(String remitente, String destinatario, String mensaje) {
+        //guardar archivo con mensajes privados
+        System.out.println("Guardando mensaje privado: " + remitente + " para " + destinatario + ": " + mensaje);
+        try (FileWriter fw = new FileWriter("mensajesPrivados.txt", true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter out = new PrintWriter(bw)) {
+            out.println(remitente + "," + destinatario + "," + mensaje);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
     }
 
     private void guardarMensaje(String mensaje) {

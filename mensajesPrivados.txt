@@ -1,0 +1,7 @@
+medico2@correo.com,medico@correo.com,asdsa
+medico@correo.com,medico2@correo.com,adsa
+medico2@correo.com,medico@correo.com,asds
+medico@correo.com,medico2@correo.com,adsa
+medico2@correo.com,medico@correo.com,asdsa
+medico2@correo.com,medico@correo.com,asds
+medico2@correo.com,medico@correo.com,asdsa

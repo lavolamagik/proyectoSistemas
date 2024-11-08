@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -26,6 +27,7 @@ public class ClienteGUI {
     DataOutputStream dataOutput;
     DefaultListModel<String> medicoListModel;
     Usuario usuario;
+    HashMap<String, JTextArea> chatPrivados = new HashMap<>();
 
     public ClienteGUI(Socket socket, Usuario usuario) {
         try {
@@ -45,6 +47,19 @@ public class ClienteGUI {
     
     // Método para mostrar mensajes en el área de texto
     public void mostrarMensaje(String mensaje) {
+        if(mensaje.startsWith("[Privado de")){
+            String[] mensajeArray = mensaje.split(":");
+            String usuario = mensajeArray[0].substring(12, mensajeArray[0].length()-1);
+            System.out.println("Usuario: " + usuario);
+            String mensajePrivado = mensajeArray[1];
+            if (!chatPrivados.containsKey(usuario)) {
+                chatPrivados.put(usuario, new JTextArea());
+            }
+            chatPrivados.get(usuario).append("[" + usuario + "]: " + mensajePrivado + "\n");
+            return;
+        }
+
+
         textArea.append(mensaje + "\n");
     }
 
@@ -56,6 +71,8 @@ public class ClienteGUI {
     public void agregarMedico(String usuario) {
         if (!medicoListModel.contains(usuario)) {
             medicoListModel.addElement(usuario);
+            System.out.println("Agregado: " + usuario);
+            chatPrivados.put(usuario, new JTextArea());
         }
     }
 
