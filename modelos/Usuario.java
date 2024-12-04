@@ -4,11 +4,13 @@ public class Usuario {
     String nombre;
     String correo;
     String clave;
+    String rut;
 
-    public Usuario(String nombre, String correo, String clave) {
+    public Usuario(String nombre, String correo, String clave, String rut) {
         this.nombre = nombre;
         this.correo = correo;
         this.clave = clave;
+        this.rut = rut;
     }
 
     public String getNombre() {
@@ -25,6 +27,10 @@ public class Usuario {
 
     public void setClave(String clave) {
         this.clave = clave;
+    }
+
+    public String getRut() {
+        return rut;
     }
 
     @Override

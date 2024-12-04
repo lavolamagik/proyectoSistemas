@@ -4,7 +4,7 @@ public class Perfil extends Usuario {
     String rut;
 
     public Perfil(String nombre, String rut, String correo, String clave) {
-        super(nombre, correo, clave);
+        super(nombre, correo, clave, rut);
         this.rut = rut;
     }
 

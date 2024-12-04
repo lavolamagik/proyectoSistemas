@@ -153,7 +153,7 @@ public class ClienteAdminGUI extends ClienteGUI {
             } else if ("Administrativo".equals(perfil)) {
                 nuevoUsuario = new Administrativo(nombre, rut, correo, clave, Area.valueOf(area.toUpperCase()));
             } else {
-                nuevoUsuario = new Admin(nombre, correo, clave);
+                nuevoUsuario = new Admin(nombre, correo, clave, rut);
             }
 
             // Agregar nuevo usuario al sistema
@@ -237,9 +237,10 @@ public class ClienteAdminGUI extends ClienteGUI {
                     if (tipo.equals("Medico")) {
                         usuariosList.add(new Medico(partes[1], partes[2], partes[3], partes[4]));
                     } else if (tipo.equals("Administrativo")) {
-                        usuariosList.add(new Administrativo(partes[2], partes[2], partes[3], partes[4], Area.valueOf(partes[5])));
+                        usuariosList.add(new Administrativo(partes[2], partes[2], partes[3], partes[4],
+                                Area.valueOf(partes[5])));
                     } else if (tipo.equals("Admin")) {
-                        usuariosList.add(new Admin(partes[1], partes[2], partes[3]));
+                        usuariosList.add(new Admin(partes[1], partes[2], partes[3], partes[4]));
                     }
                 }
             }
@@ -261,18 +262,20 @@ public class ClienteAdminGUI extends ClienteGUI {
             e.printStackTrace();
         }
     }
-  
+
     private static String usuarioToString(Usuario usuario) {
         if (usuario instanceof Medico) {
             Medico medico = (Medico) usuario;
-            return "Medico," + medico.getNombre() + "," + medico.getRut() +"," + medico.getCorreo() +"," + medico.getClave();
+            return "Medico," + medico.getNombre() + "," + medico.getRut() + "," + medico.getCorreo() + ","
+                    + medico.getClave();
         } else if (usuario instanceof Administrativo) {
             Administrativo administrativo = (Administrativo) usuario;
-            return "Administrativo," + administrativo.getNombre() + "," + administrativo.getRut() +"," + administrativo.getCorreo() + ","
+            return "Administrativo," + administrativo.getNombre() + "," + administrativo.getRut() + ","
+                    + administrativo.getCorreo() + ","
                     + administrativo.getClave() + "," + administrativo.getArea();
         } else if (usuario instanceof Admin) {
             Admin admin = (Admin) usuario;
-            return "Admin," + admin.getNombre() + "," + admin.getCorreo()+ "," + admin.getClave();
+            return "Admin," + admin.getNombre() + "," + admin.getCorreo() + "," + admin.getClave();
         }
         return "";
     }

@@ -3,6 +3,9 @@ import java.io.DataOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.*;
 import modelos.Admin;
@@ -31,7 +34,7 @@ public class InicioSesionGui {
             e.printStackTrace();
         }
         // Load users from CSV
-        usuarios = cargarUsuariosDesdeCSV("usuarios.csv");
+        usuarios = cargarUsuariosDesdeBaseDeDatos();
 
         frame = new JFrame("Inicio de Sesión");
         frame.setSize(300, 200);
@@ -90,30 +93,35 @@ public class InicioSesionGui {
         return usuario;
     }
 
-    // Method to load users from CSV
-    private Usuario[] cargarUsuariosDesdeCSV(String rutaArchivo) {
+    private Usuario[] cargarUsuariosDesdeBaseDeDatos() {
         ArrayList<Usuario> usuariosList = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                String[] datos = linea.split(",");
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT * FROM usuarios";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
 
-                String tipo = datos[0];
-                System.out.println(tipo);
+            while (rs.next()) {
+                String tipo = rs.getString("tipo");
+                String nombre = rs.getString("nombre");
+                String rut = rs.getString("rut");
+                String correo = rs.getString("correo");
+                String clave = rs.getString("clave");
+                String area = rs.getString("area");
+
                 switch (tipo) {
                     case "Medico":
-                        usuariosList.add(new Medico(datos[1], datos[2], datos[3], datos[4]));
+                        usuariosList.add(new Medico(nombre, rut, correo, clave));
                         break;
                     case "Administrativo":
-                        usuariosList.add(new Administrativo(datos[1], datos[2], datos[3], datos[4], Area.valueOf(datos[5])));
+                        usuariosList.add(new Administrativo(nombre, rut, correo, clave, Area.valueOf(area)));
                         break;
                     case "Admin":
-                        usuariosList.add(new Admin(datos[1], datos[2], datos[3]));
+                        usuariosList.add(new Admin(nombre, correo, clave, null));
                         break;
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
