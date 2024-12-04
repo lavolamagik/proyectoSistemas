@@ -17,32 +17,28 @@ public class ClienteChat {
 
     public ClienteChat() {
         try {
-            socket = new Socket("localhost", 5000);
+            socket = new Socket("192.168.2.110", 5000);
             dataInput = new DataInputStream(socket.getInputStream());
             dataOutput = new DataOutputStream(socket.getOutputStream());
-            
 
-            //this.perfil = perfil;
-            
+            // this.perfil = perfil;
+
             InicioSesionGui inicioSesion = new InicioSesionGui(socket);
-            //recibir perfil de InicioSesionGui
+            // recibir perfil de InicioSesionGui
             while (inicioSesion.getUsuario() == null) {
-                Thread.sleep(100);  // Esperar brevemente
+                Thread.sleep(100); // Esperar brevemente
             }
             usuario = inicioSesion.getUsuario();
             System.out.println(usuario);
             System.out.println(usuario.getClass());
             System.out.println(Medico.class);
-            if(this.usuario.getClass() == Medico.class){
+            if (this.usuario.getClass() == Medico.class) {
                 gui = new ClienteMedicoGUI(socket, usuario);
-            }
-            else if (this.usuario.getClass() == Administrativo.class){
+            } else if (this.usuario.getClass() == Administrativo.class) {
                 gui = new ClienteAdministrativoGUI(socket, usuario);
-            }
-            else if (this.usuario.getClass() == Admin.class){
+            } else if (this.usuario.getClass() == Admin.class) {
                 gui = new ClienteAdminGUI(socket, usuario);
             }
-                
 
             dataOutput.writeUTF(usuario.toString());
 
@@ -61,17 +57,16 @@ public class ClienteChat {
                                 for (String usuarioAgregar : usuarios) {
                                     String[] partes = usuarioAgregar.split(","); // Dividir nombre y perfil
 
-                                    if(partes[0].equals(usuario.getCorreo())){
+                                    if (partes[0].equals(usuario.getCorreo())) {
                                         continue;
                                     }
-                                
-                                    if ( partes[1].equals("Administrativo")){ 
-                                        gui.agregarAdministrativo(partes[0]); 
-                                    }
-                                    else if(partes[1].equals("Medico")){
+
+                                    if (partes[1].equals("Administrativo")) {
+                                        gui.agregarAdministrativo(partes[0]);
+                                    } else if (partes[1].equals("Medico")) {
                                         gui.agregarMedico(partes[0]);
                                     }
-                                    
+
                                 }
                             } else {
                                 gui.mostrarMensaje(mensaje);
@@ -85,8 +80,7 @@ public class ClienteChat {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-    
+
     }
 
     public static void main(String[] args) {
