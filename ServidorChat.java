@@ -1,21 +1,16 @@
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-
-import modelos.Admin;
-import modelos.Administrativo;
-import modelos.Area;
-import modelos.Medico;
-import modelos.Usuario;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import modelos.Admin;
+import modelos.Administrativo;
+import modelos.Medico;
+import modelos.Usuario;
 
 public class ServidorChat {
     private static final int PUERTO = 5000;
@@ -28,6 +23,7 @@ public class ServidorChat {
             while (true) {
                 Socket socket = servidor.accept();
                 Usuario usuario = obtenerUsuarioDeCliente(socket);
+                System.out.println("Usuario: " + usuario);
                 HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
                 clientes.add(cliente);
                 new Thread(cliente).start();
@@ -39,12 +35,14 @@ public class ServidorChat {
 
     private static Usuario obtenerUsuarioDeCliente(Socket socket) {
         try (Connection connection = DatabaseConnection.getConnection();
-                DataInputStream dataInput = new DataInputStream(socket.getInputStream())) {
+                DataInputStream dataInput = new DataInputStream(socket.getInputStream());
+                DataOutputStream dataOutput = new DataOutputStream(socket.getOutputStream())) {
 
             // Leer correo y clave enviados por el cliente
             String correo = dataInput.readUTF();
             String clave = dataInput.readUTF();
-
+            System.out.println("Correo: " + correo);
+            System.out.println("Clave: " + clave);
             // Consulta a la base de datos
             String query = "SELECT * FROM usuarios WHERE correo = ? AND clave = ?";
             PreparedStatement stmt = connection.prepareStatement(query);
@@ -52,25 +50,22 @@ public class ServidorChat {
             stmt.setString(2, clave);
             ResultSet rs = stmt.executeQuery();
 
-            // Si el usuario existe, crear el objeto correspondiente
+            // If the user exists, create the corresponding object and send it
             if (rs.next()) {
                 String tipo = rs.getString("tipo");
                 String nombre = rs.getString("nombre");
                 String rut = rs.getString("rut");
                 String area = rs.getString("area");
 
-                if ("Medico".equals(tipo)) {
-                    return new Medico(nombre, rut, correo, clave);
-                } else if ("Administrativo".equals(tipo)) {
-                    return new Administrativo(nombre, rut, correo, clave, Area.valueOf(area));
-                } else if ("Admin".equals(tipo)) {
-                    return new Admin(nombre, correo, clave, null);
+                String userInfo = tipo + "," + nombre + "," + rut + "," + correo + "," + clave;
+                if (tipo.equals("Administrativo")) {
+                    userInfo += "," + area;
                 }
-            }
-            if (!rs.next()) {
-                DataOutputStream dataOutput = new DataOutputStream(socket.getOutputStream());
-                dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos.");
-                return null;
+
+                dataOutput.writeUTF(userInfo); // Send user info to client
+                return new Medico(nombre, rut, correo, clave);  // Return the user object (just an example)
+            } else {
+                dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos."); // Send error if no match
             }
         } catch (Exception e) {
             e.printStackTrace();

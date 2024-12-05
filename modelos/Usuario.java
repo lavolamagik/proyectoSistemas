@@ -6,11 +6,10 @@ public class Usuario {
     String clave;
     String rut;
 
-    public Usuario(String nombre, String correo, String clave, String rut) {
+    public Usuario(String nombre, String correo, String clave) {
         this.nombre = nombre;
         this.correo = correo;
         this.clave = clave;
-        this.rut = rut;
     }
 
     public String getNombre() {

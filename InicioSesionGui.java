@@ -1,6 +1,8 @@
-import java.io.BufferedReader;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.Connection;
@@ -9,13 +11,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.*;
 import modelos.Admin;
-import modelos.Usuario;
-import modelos.Medico;
 import modelos.Administrativo;
 import modelos.Area;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import modelos.Medico;
+import modelos.Usuario;
 
 public class InicioSesionGui {
 
@@ -24,17 +23,19 @@ public class InicioSesionGui {
     JPasswordField contrasenaField;
     JButton botonIniciarSesion;
     DataOutputStream dataOutput;
+    DataInputStream dataInput;
     Usuario usuario;
     Usuario[] usuarios;
 
     public InicioSesionGui(Socket socket) {
         try {
             dataOutput = new DataOutputStream(socket.getOutputStream());
+            dataInput = new DataInputStream(socket.getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
         // Load users from CSV
-        usuarios = cargarUsuariosDesdeBaseDeDatos();
+        //usuarios = cargarUsuariosDesdeBaseDeDatos();
 
         frame = new JFrame("Inicio de Sesión");
         frame.setSize(300, 200);
@@ -65,30 +66,55 @@ public class InicioSesionGui {
         botonIniciarSesion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                iniciarSesion();
+                iniciarSesion(socket);
             }
         });
     }
 
-    private void iniciarSesion() {
+    private void iniciarSesion(Socket socket) {
         String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());
 
-        // Check credentials
-        for (Usuario usuario : usuarios) {
-            if (usuario.getCorreo().equals(correo) && usuario.getClave().equals(contrasena)) {
-                this.usuario = usuario;
-                break;
-            }
-        }
+        try {
+            // Send credentials to the server
+            dataOutput.writeUTF(correo);
+            dataOutput.writeUTF(contrasena);
 
-        if (this.usuario != null) {
-            frame.dispose();
-        } else {
-            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
+            // Receive the response from the server
+            String response = dataInput.readUTF();
+
+            // If response is the user information (not an error), we assign the user
+            if (!response.equals("ERROR: Usuario o contraseña incorrectos.")) {
+                usuario = parseUsuarioFromString(response);
+                frame.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
+    // Method to parse the user data received as a string from the server
+    private Usuario parseUsuarioFromString(String data) {
+        String[] userData = data.split(",");
+        String tipo = userData[0];
+        String nombre = userData[1];
+        String rut = userData[2];
+        String correo = userData[3];
+        String clave = userData[4];
+
+        if (tipo.equals("Medico")) {
+            return new Medico(nombre, rut, correo, clave);
+        } else if (tipo.equals("Administrativo")) {
+            Area area = Area.valueOf(userData[5]);
+            return new Administrativo(nombre, rut, correo, clave, area);
+        } else if (tipo.equals("Admin")) {
+            return new Admin(nombre, correo, clave);
+        }
+        return null;
+    }
+    
     public Usuario getUsuario() {
         return usuario;
     }
@@ -117,7 +143,7 @@ public class InicioSesionGui {
                         usuariosList.add(new Administrativo(nombre, rut, correo, clave, Area.valueOf(area)));
                         break;
                     case "Admin":
-                        usuariosList.add(new Admin(nombre, correo, clave, null));
+                        usuariosList.add(new Admin(nombre, correo, clave));
                         break;
                 }
             }

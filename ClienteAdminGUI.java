@@ -153,7 +153,7 @@ public class ClienteAdminGUI extends ClienteGUI {
             } else if ("Administrativo".equals(perfil)) {
                 nuevoUsuario = new Administrativo(nombre, rut, correo, clave, Area.valueOf(area.toUpperCase()));
             } else {
-                nuevoUsuario = new Admin(nombre, correo, clave, rut);
+                nuevoUsuario = new Admin(nombre, correo, clave);
             }
 
             // Agregar nuevo usuario al sistema
@@ -240,7 +240,7 @@ public class ClienteAdminGUI extends ClienteGUI {
                         usuariosList.add(new Administrativo(partes[2], partes[2], partes[3], partes[4],
                                 Area.valueOf(partes[5])));
                     } else if (tipo.equals("Admin")) {
-                        usuariosList.add(new Admin(partes[1], partes[2], partes[3], partes[4]));
+                        usuariosList.add(new Admin(partes[1], partes[2], partes[3]));
                     }
                 }
             }
