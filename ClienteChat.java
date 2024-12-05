@@ -2,7 +2,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-
 import modelos.Admin;
 import modelos.Administrativo;
 import modelos.Medico;
@@ -17,7 +16,7 @@ public class ClienteChat {
 
     public ClienteChat() {
         try {
-            socket = new Socket("192.168.2.110", 5000);
+            socket = new Socket("34.57.136.213", 5000);
             dataInput = new DataInputStream(socket.getInputStream());
             dataOutput = new DataOutputStream(socket.getOutputStream());
 
