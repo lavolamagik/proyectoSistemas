@@ -16,6 +16,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 public class ClienteAdminGUI extends ClienteGUI {
@@ -157,13 +159,32 @@ public class ClienteAdminGUI extends ClienteGUI {
             }
 
             // Agregar nuevo usuario al sistema
-            ServidorChat.agregarUsuarioAlSistema(nuevoUsuario);
+            agregarUsuarioAlSistema(nuevoUsuario);
             dialogo.dispose();
         });
 
         dialogo.add(crearButton);
         dialogo.setLocationRelativeTo(frame);
         dialogo.setVisible(true);
+    }
+
+    public static void agregarUsuarioAlSistema(Usuario usuario) {
+        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
+            String query = "INSERT INTO usuarios (tipo, nombre, rut, correo, clave, area) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, usuario.getClass().getSimpleName()); // 'Medico', 'Administrativo', o 'Admin'
+            stmt.setString(2, usuario.getNombre());
+            stmt.setString(3, usuario instanceof Medico || usuario instanceof Administrativo ? usuario.getRut() : null);
+            stmt.setString(4, usuario.getCorreo());
+            stmt.setString(5, usuario.getClave());
+            stmt.setString(6,
+                    usuario instanceof Administrativo ? ((Administrativo) usuario).getArea().toString() : null);
+            stmt.executeUpdate();
+
+            System.out.println("Usuario agregado a la base de datos: " + usuario.getCorreo());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void mostrarFormularioCambioClave() {
