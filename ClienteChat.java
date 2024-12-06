@@ -39,7 +39,7 @@ public class ClienteChat {
                 gui = new ClienteAdminGUI(socket, usuario);
             }
 
-            dataOutput.writeUTF(usuario.toString());
+            //dataOutput.writeUTF(usuario.toString());
 
             // Hilo para recibir mensajes
             new Thread(new Runnable() {

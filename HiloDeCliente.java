@@ -8,11 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-
-import modelos.Usuario;
-import modelos.Admin;
 import modelos.Administrativo;
-import modelos.Medico;
+import modelos.Usuario;
 
 public class HiloDeCliente implements Runnable {
     private static ArrayList<HiloDeCliente> clientes = new ArrayList<>();
@@ -27,12 +24,16 @@ public class HiloDeCliente implements Runnable {
             System.out.println("Clase: " + usuario.getClass().getName());
             dataInput = new DataInputStream(socket.getInputStream());
             dataOutput = new DataOutputStream(socket.getOutputStream());
-            clientes.add(this);
             cargarMensajes(); // Cargar mensajes anteriores
             enviarListaUsuarios();
         } catch (Exception e) {
+            System.out.println("Error al crear hilo de cliente");
             e.printStackTrace();
         }
+    }
+    
+    public void start() {
+        clientes.add(this);
     }
 
     @Override

@@ -70,7 +70,11 @@ public class ServidorChat {
                 }
 
                 // Enviar el usuario al cliente
-                dataOutput.writeUTF(usuario.toString());  // Enviar detalles del usuario autenticado
+                if (usuario != null) {
+                    dataOutput.writeUTF(usuario.toString());  // Enviar detalles del usuario autenticado
+                } else {
+                    dataOutput.writeUTF("ERROR: Usuario no encontrado.");
+                }
                 return usuario;
             } else {
                 dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos."); // Send error if no match
