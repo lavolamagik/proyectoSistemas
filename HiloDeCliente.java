@@ -187,7 +187,7 @@ public class HiloDeCliente implements Runnable {
     }
 
     private void guardarMensajePrivado(String remitente, String destinatario, String mensaje) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
             String query = "INSERT INTO mensajePrivado (remitente, destinatario, mensaje) VALUES (?, ?, ?)";
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setString(1, remitente);

@@ -198,7 +198,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
 
     public void cargarChatPrivado() {
 
-        chatPrivados = ServidorChat.obtenerMensajesPrivados(usuario, chatPrivados);
+        
 
     }
 

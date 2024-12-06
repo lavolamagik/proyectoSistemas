@@ -7,8 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
-import javax.swing.JTextArea;
 import modelos.Admin;
 import modelos.Administrativo;
 import modelos.Area;
@@ -129,37 +127,5 @@ public class ServidorChat {
         return "";
     }
 
-    public static HashMap<String, JTextArea> obtenerMensajesPrivados(Usuario usuario, HashMap<String, JTextArea> chatPrivados) {
-        
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "SELECT * FROM mensajePrivado";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String remitente = rs.getString("remitente");
-                String destinatario = rs.getString("destinatario");
-                String mensaje = rs.getString("mensaje");
-
-                if(remitente.equals(usuario.getCorreo())){
-                    if (!chatPrivados.containsKey(destinatario)) {
-                        chatPrivados.put(destinatario, new JTextArea());
-                    }
-                    chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
-                }
-                else if(destinatario.equals(usuario.getCorreo())){
-                    if (!chatPrivados.containsKey(remitente)) {
-                        chatPrivados.put(remitente, new JTextArea());
-                    }
-                    chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
-                }
-            }
-            return chatPrivados;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 }
