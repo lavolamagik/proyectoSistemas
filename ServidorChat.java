@@ -27,6 +27,10 @@ public class ServidorChat {
                 if (socket != null && socket.isConnected()) {
                     Usuario usuario = obtenerUsuarioDeCliente(socket);
                     System.out.println("Usuario: " + usuario);
+                    if(usuario == null) {
+                        System.out.println("Usuario no autenticado.");
+                        continue;
+                    }
                     HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
                     clientes.add(cliente);
                     new Thread(cliente).start();
