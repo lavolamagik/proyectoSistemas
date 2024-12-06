@@ -23,11 +23,15 @@ public class ServidorChat {
             System.out.println("Servidor iniciado...");
             while (true) {
                 Socket socket = servidor.accept();
-                Usuario usuario = obtenerUsuarioDeCliente(socket);
-                System.out.println("Usuario: " + usuario);
-                HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
-                clientes.add(cliente);
-                new Thread(cliente).start();
+                if (socket != null && socket.isConnected()) {
+                    Usuario usuario = obtenerUsuarioDeCliente(socket);
+                    System.out.println("Usuario: " + usuario);
+                    HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
+                    clientes.add(cliente);
+                    new Thread(cliente).start();
+                } else {
+                    System.out.println("Error al aceptar la conexión del cliente.");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
