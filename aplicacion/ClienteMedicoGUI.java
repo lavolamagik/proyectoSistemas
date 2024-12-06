@@ -144,6 +144,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
 
     // Método para abrir una ventana de chat privado
     public void abrirVentanaChatPrivado(String usuarioSeleccionado) {
+        
         cargarChatPrivado();
 
         JFrame ventanaChatPrivado = new JFrame("Chat con " + usuarioSeleccionado);

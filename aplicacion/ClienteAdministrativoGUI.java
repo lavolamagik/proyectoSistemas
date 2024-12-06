@@ -1,19 +1,16 @@
-import javax.swing.*;
-
-import java.awt.event.MouseEvent;
-
-import modelos.Administrativo;
-import modelos.Usuario;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.DataOutputStream;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.*;
+import modelos.Administrativo;
+import modelos.Usuario;
 
 public class ClienteAdministrativoGUI extends ClienteGUI {
 
@@ -94,11 +91,11 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
         frame.setVisible(true);
 
                 // Doble clic en un usuario para abrir ventana de chat privado
-        medicoList.addMouseListener(new MouseAdapter() {
+                administrativoList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    String usuarioSeleccionado = medicoList.getSelectedValue();
+                    String usuarioSeleccionado = administrativoList.getSelectedValue();
                     if (usuarioSeleccionado != null) {
                         abrirVentanaChatPrivado(usuarioSeleccionado);
                     }
