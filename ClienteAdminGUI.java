@@ -133,11 +133,17 @@ public class ClienteAdminGUI extends ClienteGUI {
         dialogo.add(claveField);
         dialogo.add(new JLabel("Perfil:"));
         dialogo.add(perfilBox);
-        dialogo.add(new JLabel("Área (Solo Administrativo):"));
+        JLabel areaLabel = new JLabel("Área (Solo Administrativo):");
+        dialogo.add(areaLabel);
         dialogo.add(areaBox);
+        areaLabel.setVisible(false);
+        areaBox.setVisible(false);
+
         perfilBox.addActionListener(e -> {
             String perfilSeleccionado = (String) perfilBox.getSelectedItem();
-            areaBox.setEnabled("Administrativo".equals(perfilSeleccionado));
+            boolean isAdministrativo = "Administrativo".equals(perfilSeleccionado);
+            areaLabel.setVisible(isAdministrativo);
+            areaBox.setVisible(isAdministrativo);
         });
         JButton crearButton = new JButton("Crear");
         crearButton.addActionListener(e -> {
