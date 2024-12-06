@@ -22,17 +22,18 @@ public class HiloDeCliente implements Runnable {
         this.usuario = usuario;
         System.out.println("Usuario: " + usuario);
         System.out.println("Clase: " + usuario.getClass().getName());
+        System.out.println("socket: " + socket);
 
         try{
             dataInput = new DataInputStream(socket.getInputStream());
-        }catch(Exception e){
+        }catch(IOException e){
             System.out.println("Error al crear dataInput");
             e.printStackTrace();
         }
 
         try{
             dataOutput = new DataOutputStream(socket.getOutputStream());
-        }catch(Exception e){
+        }catch(IOException e){
             System.out.println("Error al crear dataOutput");
             e.printStackTrace();
         }
