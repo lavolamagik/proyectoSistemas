@@ -25,6 +25,9 @@ public class ServidorChat {
                 Socket socket = servidor.accept();
                 if (socket != null && socket.isConnected()) {
                     Usuario usuario = obtenerUsuarioDeCliente(socket);
+                    if(usuario == null) {
+                        continue;
+                    }
                     System.out.println("Usuario: " + usuario);
                     HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
                     clientes.add(cliente);
@@ -91,24 +94,7 @@ public class ServidorChat {
         return null;
     }
 
-    public static void agregarUsuarioAlSistema(Usuario usuario) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "INSERT INTO usuarios (tipo, nombre, rut, correo, clave, area) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setString(1, usuario.getClass().getSimpleName()); // 'Medico', 'Administrativo', o 'Admin'
-            stmt.setString(2, usuario.getNombre());
-            stmt.setString(3, usuario instanceof Medico || usuario instanceof Administrativo ? usuario.getRut() : null);
-            stmt.setString(4, usuario.getCorreo());
-            stmt.setString(5, usuario.getClave());
-            stmt.setString(6,
-                    usuario instanceof Administrativo ? ((Administrativo) usuario).getArea().toString() : null);
-            stmt.executeUpdate();
 
-            System.out.println("Usuario agregado a la base de datos: " + usuario.getCorreo());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private static String usuarioToString(Usuario usuario) {
         if (usuario instanceof Medico) {
