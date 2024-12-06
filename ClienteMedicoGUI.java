@@ -93,7 +93,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
                 if (e.getClickCount() == 2) {
                     String usuarioSeleccionado = medicoList.getSelectedValue();
                     if (usuarioSeleccionado != null) {
-                        abrirVentanaChatPrivado(usuarioSeleccionado);
+                        abrirVentanaChatPrivado(usuarioSeleccionado, socket);
                     }
                 }
             }
@@ -143,7 +143,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
     }
 
     // Método para abrir una ventana de chat privado
-    public void abrirVentanaChatPrivado(String usuarioSeleccionado) {
+    public void abrirVentanaChatPrivado(String usuarioSeleccionado, Socket socket) {
         
         cargarChatPrivado();
 
@@ -179,6 +179,10 @@ public class ClienteMedicoGUI extends ClienteGUI {
             String mensaje = campoMensajePrivado.getText().trim();
             if (!mensaje.isEmpty()) {
                 try {
+                    if (socket.isClosed()) {
+                        JOptionPane.showMessageDialog(ventanaChatPrivado, "No se puede enviar el mensaje. El servidor está desconectado.");
+                        return;
+                    }
                     dataOutput.writeUTF("@" + usuarioSeleccionado + ":" + mensaje); // Enviar mensaje privado
                     areaMensajes.append("Tú: " + mensaje + "\n"); // Mostrar en la ventana privada
                     campoMensajePrivado.setText("");

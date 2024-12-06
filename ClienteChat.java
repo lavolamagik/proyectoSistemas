@@ -16,17 +16,38 @@ public class ClienteChat {
 
     public ClienteChat() {
         try {
-            socket = new Socket("34.57.136.213", 5000);
-            dataInput = new DataInputStream(socket.getInputStream());
-            dataOutput = new DataOutputStream(socket.getOutputStream());
+            InicioSesionGui inicioSesion = new InicioSesionGui();
+   
+            try {
+                
+                socket = new Socket("34.57.136.213", 5000);
+            } catch (IOException e) {
+                System.out.println("Intentando reconectar...");
+                Thread.sleep(1000); 
+            }
+            while (socket == null || !socket.isConnected()) {
+                try {
+                    socket = new Socket("34.57.136.213", 5000);
+                    if (socket.isConnected()) {
+                        System.out.println("Conectado al servidor");
+                    }
+                } catch (IOException e) {
+                    System.out.println("Intentando reconectar...");
+                    Thread.sleep(1000); 
+                }
+            }
+
+            inicioSesion.setSocket(socket);
 
             // this.perfil = perfil;
 
-            InicioSesionGui inicioSesion = new InicioSesionGui(socket);
+            
             // recibir perfil de InicioSesionGui
             while (inicioSesion.getUsuario() == null) {
                 Thread.sleep(100); // Esperar brevemente
             }
+            dataInput = new DataInputStream(socket.getInputStream());
+            dataOutput = new DataOutputStream(socket.getOutputStream());
             usuario = inicioSesion.getUsuario();
             System.out.println(usuario);
             System.out.println(usuario.getClass());

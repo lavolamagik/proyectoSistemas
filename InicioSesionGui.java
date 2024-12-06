@@ -26,14 +26,9 @@ public class InicioSesionGui {
     DataInputStream dataInput;
     Usuario usuario;
     Usuario[] usuarios;
+    Socket socket;
 
-    public InicioSesionGui(Socket socket) {
-        try {
-            dataOutput = new DataOutputStream(socket.getOutputStream());
-            dataInput = new DataInputStream(socket.getInputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public InicioSesionGui() {
         // Load users from CSV
         //usuarios = cargarUsuariosDesdeBaseDeDatos();
 
@@ -72,6 +67,18 @@ public class InicioSesionGui {
     }
 
     private void iniciarSesion() {
+
+        if (socket == null) {
+            JOptionPane.showMessageDialog(null, "No se ha podido conectar al servidor.");
+            return;
+        }
+        try {
+            dataOutput = new DataOutputStream(socket.getOutputStream());
+            dataInput = new DataInputStream(socket.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());
 
@@ -115,6 +122,10 @@ public class InicioSesionGui {
     
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 
 
