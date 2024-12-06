@@ -18,18 +18,28 @@ public class HiloDeCliente implements Runnable {
     private Usuario usuario;
 
     public HiloDeCliente(Socket socket, Usuario usuario) {
-        try {
-            this.usuario = usuario;
-            System.out.println("Usuario: " + usuario);
-            System.out.println("Clase: " + usuario.getClass().getName());
+    
+        this.usuario = usuario;
+        System.out.println("Usuario: " + usuario);
+        System.out.println("Clase: " + usuario.getClass().getName());
+
+        try{
             dataInput = new DataInputStream(socket.getInputStream());
-            dataOutput = new DataOutputStream(socket.getOutputStream());
-            cargarMensajes(); // Cargar mensajes anteriores
-            enviarListaUsuarios();
-        } catch (Exception e) {
-            System.out.println("Error al crear hilo de cliente");
+        }catch(Exception e){
+            System.out.println("Error al crear dataInput");
             e.printStackTrace();
         }
+
+        try{
+            dataOutput = new DataOutputStream(socket.getOutputStream());
+        }catch(Exception e){
+            System.out.println("Error al crear dataOutput");
+            e.printStackTrace();
+        }
+
+        cargarMensajes(); // Cargar mensajes anteriores
+        enviarListaUsuarios();
+       
     }
     
     public void start() {
