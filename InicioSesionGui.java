@@ -97,20 +97,16 @@ public class InicioSesionGui {
 
     // Method to parse the user data received as a string from the server
     private Usuario parseUsuarioFromString(String data) {
-        String[] userData = data.split(",");
-        String tipo = userData[0];
-        String nombre = userData[1];
-        String rut = userData[2];
-        String correo = userData[3];
-        String clave = userData[4];
-
-        if (tipo.equals("Medico")) {
-            return new Medico(nombre, rut, correo, clave);
-        } else if (tipo.equals("Administrativo")) {
-            Area area = Area.valueOf(userData[5]);
-            return new Administrativo(nombre, rut, correo, clave, area);
-        } else if (tipo.equals("Admin")) {
-            return new Admin(nombre, correo, clave);
+        String[] partes = data.split(": ");
+        if (partes[0].equals("Medico")) {
+            String[] datos = partes[1].split(", ");
+            return new Medico(datos[0], datos[1], datos[2], datos[3]);
+        } else if (partes[0].equals("Administrativo")) {
+            String[] datos = partes[1].split(", ");
+            return new Administrativo(datos[0], datos[1], datos[2], datos[3], Area.valueOf(datos[4]));
+        } else if (partes[0].equals("Admin")) {
+            String[] datos = partes[1].split(", ");
+            return new Admin(datos[0], datos[1], datos[2]);
         }
         return null;
     }
