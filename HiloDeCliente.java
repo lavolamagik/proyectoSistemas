@@ -23,6 +23,26 @@ public class HiloDeCliente implements Runnable {
         System.out.println("Usuario: " + usuario);
         System.out.println("Clase: " + usuario.getClass().getName());
         System.out.println("socket: " + socket);
+        System.out.println("socket: " + socket.isConnected());
+        System.out.println("socket: " + socket.getInetAddress());
+        System.out.println("socket: " + socket.getPort());
+        System.out.println("socket: " + socket.getLocalPort());
+        System.out.println("socket: " + socket.getLocalAddress());
+        System.out.println("socket: " + socket.getLocalSocketAddress());
+        System.out.println("socket: " + socket.getRemoteSocketAddress());
+        try {
+            System.out.println("socket getInpuStream: " + socket.getInputStream());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            System.out.println("socket getOutputStream: " + socket.getOutputStream());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
 
         try{
             dataInput = new DataInputStream(socket.getInputStream());
