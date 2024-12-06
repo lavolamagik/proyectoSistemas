@@ -63,9 +63,9 @@ public class HiloDeCliente implements Runnable {
                     }
                 } else if (mensaje.startsWith("/")) {
                     if(mensaje.startsWith("/Medico")){
-                        String[] partes = mensaje.split(":", 3);
-                        String destinatario = partes[1];
-                        String mensajePrivado = partes[2];
+                        String[] partes = mensaje.split(":", 2);
+                        String destinatario = "Medico"; // Obtener destinatario
+                        String mensajePrivado = partes[1];
                         for (HiloDeCliente cliente : clientes) {
                             if (cliente.correoUsuario().equals(destinatario)) {
                                 String mensajeParaGuardar = correoUsuario() + ": " + mensajePrivado;
