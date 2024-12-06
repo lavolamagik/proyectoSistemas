@@ -32,40 +32,19 @@ public class HiloDeCliente implements Runnable {
         System.out.println("socket: " + socket.getRemoteSocketAddress());
         System.out.println("socket is closed: " + socket.isClosed());
         try {
-            System.out.println("socket getInpuStream: " + socket.getInputStream());
+            dataInput = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
-            System.out.println("socket getOutputStream: " + socket.getOutputStream());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-
-        try{
-            dataInput = new DataInputStream(socket.getInputStream());
-        }catch(IOException e){
-            System.out.println("Error al crear dataInput");
-            e.printStackTrace();
-        }
-
-        try{
             dataOutput = new DataOutputStream(socket.getOutputStream());
-        }catch(IOException e){
-            System.out.println("Error al crear dataOutput");
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
+        clientes.add(this);
         cargarMensajes(); // Cargar mensajes anteriores
         enviarListaUsuarios();
        
-    }
-    
-    public void start() {
-        clientes.add(this);
     }
 
     @Override
