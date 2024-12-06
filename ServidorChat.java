@@ -76,6 +76,7 @@ public class ServidorChat {
                 // Enviar el usuario al cliente
                 if (usuario != null) {
                     dataOutput.writeUTF(usuario.toString());  // Enviar detalles del usuario autenticado
+                    System.out.println("Usuario autenticado: " + usuario.getCorreo());
                 } else {
                     dataOutput.writeUTF("ERROR: Usuario no encontrado.");
                 }

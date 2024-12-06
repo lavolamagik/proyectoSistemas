@@ -83,6 +83,7 @@ public class InicioSesionGui {
             // Receive the response from the server
             String response = dataInput.readUTF();
 
+            System.out.println(response);
             // If response is the user information (not an error), we assign the user
             if (!response.equals("ERROR: Usuario o contraseña incorrectos.")) {
                 usuario = parseUsuarioFromString(response);
