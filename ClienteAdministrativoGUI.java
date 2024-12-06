@@ -192,6 +192,7 @@ public class ClienteAdministrativoGUI extends ClienteGUI {
             stmt.setString(2, usuario.getCorreo());
             ResultSet rs = stmt.executeQuery();
 
+            chatPrivados.clear();
             while (rs.next()) {
                 String remitente = rs.getString("remitente");
                 String destinatario = rs.getString("destinatario");

@@ -205,6 +205,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
             stmt.setString(2, usuario.getCorreo());
             ResultSet rs = stmt.executeQuery();
 
+            chatPrivados.clear(); // Limpiar los mensajes anteriores
             while (rs.next()) {
                 String remitente = rs.getString("remitente");
                 String destinatario = rs.getString("destinatario");

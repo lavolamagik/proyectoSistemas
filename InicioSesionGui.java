@@ -117,38 +117,5 @@ public class InicioSesionGui {
         return usuario;
     }
 
-    private Usuario[] cargarUsuariosDesdeBaseDeDatos() {
-        ArrayList<Usuario> usuariosList = new ArrayList<>();
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "SELECT * FROM usuarios";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String tipo = rs.getString("tipo");
-                String nombre = rs.getString("nombre");
-                String rut = rs.getString("rut");
-                String correo = rs.getString("correo");
-                String clave = rs.getString("clave");
-                String area = rs.getString("area");
-
-                switch (tipo) {
-                    case "Medico":
-                        usuariosList.add(new Medico(nombre, rut, correo, clave));
-                        break;
-                    case "Administrativo":
-                        usuariosList.add(new Administrativo(nombre, rut, correo, clave, Area.valueOf(area)));
-                        break;
-                    case "Admin":
-                        usuariosList.add(new Admin(nombre, correo, clave));
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return usuariosList.toArray(new Usuario[0]);
-    }
 }
