@@ -66,12 +66,12 @@ public class InicioSesionGui {
         botonIniciarSesion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                iniciarSesion(socket);
+                iniciarSesion();
             }
         });
     }
 
-    private void iniciarSesion(Socket socket) {
+    private void iniciarSesion() {
         String correo = usuarioField.getText();
         String contrasena = new String(contrasenaField.getPassword());
 
@@ -92,6 +92,7 @@ public class InicioSesionGui {
                 JOptionPane.showMessageDialog(null, response);
             }
         } catch (IOException e) {
+            System.out.println("Error al enviar credenciales al servidor.");
             e.printStackTrace();
         }
     }

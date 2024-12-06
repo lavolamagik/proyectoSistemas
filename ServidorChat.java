@@ -23,9 +23,11 @@ public class ServidorChat {
             System.out.println("Servidor iniciado...");
             while (true) {
                 Socket socket = servidor.accept();
+                System.out.println("socket is closed 1: " + socket.isClosed());
                 if (socket != null && socket.isConnected()) {
                     Usuario usuario = obtenerUsuarioDeCliente(socket);
                     System.out.println("Usuario: " + usuario);
+                    System.out.println("socket is closed 2: " + socket.isClosed());
                     HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
                     clientes.add(cliente);
                     new Thread(cliente).start();
