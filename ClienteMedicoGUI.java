@@ -198,32 +198,7 @@ public class ClienteMedicoGUI extends ClienteGUI {
 
     public void cargarChatPrivado() {
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "SELECT * FROM mensajePrivado";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String remitente = rs.getString("remitente");
-                String destinatario = rs.getString("destinatario");
-                String mensaje = rs.getString("mensaje");
-
-                if(remitente.equals(usuario.getCorreo())){
-                    if (!chatPrivados.containsKey(destinatario)) {
-                        chatPrivados.put(destinatario, new JTextArea());
-                    }
-                    chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
-                }
-                else if(destinatario.equals(usuario.getCorreo())){
-                    if (!chatPrivados.containsKey(remitente)) {
-                        chatPrivados.put(remitente, new JTextArea());
-                    }
-                    chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        chatPrivados = ServidorChat.obtenerMensajesPrivados(usuario, chatPrivados);
 
     }
 

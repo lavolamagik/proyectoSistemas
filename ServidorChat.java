@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.JTextArea;
 import modelos.Admin;
 import modelos.Administrativo;
 import modelos.Area;
@@ -23,11 +25,9 @@ public class ServidorChat {
             System.out.println("Servidor iniciado...");
             while (true) {
                 Socket socket = servidor.accept();
-                System.out.println("socket is closed 1: " + socket.isClosed());
                 if (socket != null && socket.isConnected()) {
                     Usuario usuario = obtenerUsuarioDeCliente(socket);
                     System.out.println("Usuario: " + usuario);
-                    System.out.println("socket is closed 2: " + socket.isClosed());
                     HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
                     clientes.add(cliente);
                     new Thread(cliente).start();
@@ -127,6 +127,39 @@ public class ServidorChat {
             return "Admin," + admin.getNombre() + "," + admin.getCorreo() + "," + admin.getClave();
         }
         return "";
+    }
+
+    public static HashMap<String, JTextArea> obtenerMensajesPrivados(Usuario usuario, HashMap<String, JTextArea> chatPrivados) {
+        
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT * FROM mensajePrivado";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String remitente = rs.getString("remitente");
+                String destinatario = rs.getString("destinatario");
+                String mensaje = rs.getString("mensaje");
+
+                if(remitente.equals(usuario.getCorreo())){
+                    if (!chatPrivados.containsKey(destinatario)) {
+                        chatPrivados.put(destinatario, new JTextArea());
+                    }
+                    chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
+                }
+                else if(destinatario.equals(usuario.getCorreo())){
+                    if (!chatPrivados.containsKey(remitente)) {
+                        chatPrivados.put(remitente, new JTextArea());
+                    }
+                    chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
+                }
+            }
+            return chatPrivados;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
