@@ -30,6 +30,7 @@ public class HiloDeCliente implements Runnable {
         System.out.println("socket: " + socket.getLocalAddress());
         System.out.println("socket: " + socket.getLocalSocketAddress());
         System.out.println("socket: " + socket.getRemoteSocketAddress());
+        System.out.println("socket is closed: " + socket.isClosed());
         try {
             System.out.println("socket getInpuStream: " + socket.getInputStream());
         } catch (IOException e) {
