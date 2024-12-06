@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import modelos.Admin;
 import modelos.Administrativo;
+import modelos.Area;
 import modelos.Medico;
 import modelos.Usuario;
 
@@ -43,6 +44,7 @@ public class ServidorChat {
             String clave = dataInput.readUTF();
             System.out.println("Correo: " + correo);
             System.out.println("Clave: " + clave);
+
             // Consulta a la base de datos
             String query = "SELECT * FROM usuarios WHERE correo = ? AND clave = ?";
             PreparedStatement stmt = connection.prepareStatement(query);
@@ -57,13 +59,19 @@ public class ServidorChat {
                 String rut = rs.getString("rut");
                 String area = rs.getString("area");
 
-                String userInfo = tipo + "," + nombre + "," + rut + "," + correo + "," + clave;
-                if (tipo.equals("Administrativo")) {
-                    userInfo += "," + area;
+                // Crear el objeto de usuario según el tipo
+                Usuario usuario = null;
+                if ("Medico".equals(tipo)) {
+                    usuario = new Medico(nombre, rut, correo, clave);
+                } else if ("Administrativo".equals(tipo)) {
+                    usuario = new Administrativo(nombre, rut, correo, clave, Area.valueOf(area));
+                } else if ("Admin".equals(tipo)) {
+                    usuario = new Admin(nombre, correo, clave);
                 }
 
-                dataOutput.writeUTF(userInfo); // Send user info to client
-                return new Medico(nombre, rut, correo, clave);  // Return the user object (just an example)
+                // Enviar el usuario al cliente
+                dataOutput.writeUTF(usuario.toString());  // Enviar detalles del usuario autenticado
+                return usuario;
             } else {
                 dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos."); // Send error if no match
             }
