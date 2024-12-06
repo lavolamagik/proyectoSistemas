@@ -1,12 +1,13 @@
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import modelos.Administrativo;
 import modelos.Usuario;
@@ -63,8 +64,8 @@ public class HiloDeCliente implements Runnable {
                         if (cliente.correoUsuario().equals(destinatario)) {
                             String mensajeParaGuardar = correoUsuario() + ": " + mensajePrivado;
                             System.out.println("Guardando mensaje: " + mensajeParaGuardar);
-                            //guardarMensaje("[Privado de " + correoUsuario() + "]: " + mensajeParaGuardar);
-                            guardarHashMap(correoUsuario(), destinatario, mensajePrivado);
+    
+                            guardarMensajePrivado(correoUsuario(), destinatario, mensajePrivado);
                             cliente.dataOutput.writeUTF("[Privado de " + correoUsuario() + "]: " + mensajePrivado);
                             break;
                         }
@@ -78,8 +79,8 @@ public class HiloDeCliente implements Runnable {
                             if (cliente.correoUsuario().equals(destinatario)) {
                                 String mensajeParaGuardar = correoUsuario() + ": " + mensajePrivado;
                                 System.out.println("Guardando mensaje: " + mensajeParaGuardar);
-                                //guardarMensaje("[Privado de " + correoUsuario() + "]: " + mensajeParaGuardar);
-                                guardarHashMap(correoUsuario(), destinatario, mensajePrivado);
+    
+                                guardarMensaje(correoUsuario(), destinatario, mensajePrivado);
                                 cliente.dataOutput.writeUTF("[Privado de " + correoUsuario() + "]: " + mensajePrivado);
                                 break;
                             }
@@ -95,10 +96,8 @@ public class HiloDeCliente implements Runnable {
                         System.out.println("Cliente: "+cliente.usuario);
                         if (cliente.usuario.getClass().getSimpleName().equals(destinatario)) {
                             System.out.println("Cliente2: "+cliente.usuario);
-                            String mensajeParaGuardar = correoUsuario() + " para grupo de " + destinatario + ": "
-                                    + mensajeGrupo;
-                            guardarMensaje("[ " + correoUsuario() + " para grupo de " + destinatario + "]: "
-                                    + mensajeParaGuardar);
+        
+                            guardarMensaje(correoUsuario(), destinatario, mensajeGrupo);
                             if(destinatario.equals("Administrativo")){
                                 Administrativo administrativo = (Administrativo) cliente.usuario;
                                 System.out.println("Administrativo: "+ administrativo);
@@ -121,9 +120,8 @@ public class HiloDeCliente implements Runnable {
                 } else {
                     // Enviar mensaje general a todos
                     for (HiloDeCliente cliente : clientes) {
-                        String mensajeParaGuardar = correoUsuario() + ": " + mensaje;
-                        System.out.println("Guardando mensaje: " + mensajeParaGuardar);
-                        guardarMensaje(mensajeParaGuardar); // Guardar en archivo
+
+                        guardarMensaje(correoUsuario(), "TODOS", mensaje); // Guardar en archivo
                         cliente.dataOutput.writeUTF(correoUsuario() + ": " + mensaje);
                     }
                 }
@@ -181,42 +179,56 @@ public class HiloDeCliente implements Runnable {
     
     }
 
-    private void guardarMensaje(String mensaje) {
-        // Lógica para guardar el mensaje al fichero
-        try (FileWriter fw = new FileWriter("historial.txt", true);
-                BufferedWriter bw = new BufferedWriter(fw);
-                PrintWriter out = new PrintWriter(bw)) {
-            // Leer el último mensaje guardado
-            String ultimoMensaje = "";
-            try (BufferedReader br = new BufferedReader(new FileReader("historial.txt"))) {
-                String linea;
-                while ((linea = br.readLine()) != null) {
-                    ultimoMensaje = linea;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void guardarMensaje(String remitente, String destinatario, String mensaje) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "INSERT INTO mensaje (remitente, destinatario, mensaje) VALUES (?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, remitente);
+            stmt.setString(2, destinatario);
+            stmt.setString(3, mensaje);
+            stmt.executeUpdate();
 
-            // Verificar si el mensaje es igual al último mensaje guardado
-            if (ultimoMensaje.equals(mensaje)) {
-                return;
-            } else {
-                out.println(mensaje);
-            }
-        } catch (IOException e) {
+            System.out.println("Mensaje guardado en la base de datos: " + remitente + " para " + destinatario + ": " + mensaje);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void guardarMensajePrivado(String remitente, String destinatario, String mensaje) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "INSERT INTO mensajePrivado (remitente, destinatario, mensaje) VALUES (?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, remitente);
+            stmt.setString(2, destinatario);
+            stmt.setString(3, mensaje);
+            stmt.executeUpdate();
+
+            System.out.println("Mensaje privado guardado en la base de datos: " + remitente + " para " + destinatario + ": " + mensaje);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void cargarMensajes() {
-        try (BufferedReader br = new BufferedReader(new FileReader("historial.txt"))) {
-            String line;
-            // Enviar el historial solo al cliente que se está reconectando
-            while ((line = br.readLine()) != null) {
-                // solo enviar mensaje si no ha sido enviado previamente
-                dataOutput.writeUTF(line);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT * FROM mensaje";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String remitente = rs.getString("remitente");
+                String destinatario = rs.getString("destinatario");
+                String mensaje = rs.getString("mensaje");
+
+                if (remitente.equals(correoUsuario())) {
+                    dataOutput.writeUTF("[Tú para " + destinatario + "]: " + mensaje);
+                } else if (destinatario.equals(correoUsuario())) {
+                    dataOutput.writeUTF("[" + remitente + " para " + destinatario+ ": " + mensaje);
+                }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

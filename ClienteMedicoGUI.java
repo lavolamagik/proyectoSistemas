@@ -12,6 +12,9 @@ import java.io.DataOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.awt.event.MouseAdapter;
 
 public class ClienteMedicoGUI extends ClienteGUI {
@@ -147,6 +150,9 @@ public class ClienteMedicoGUI extends ClienteGUI {
         ventanaChatPrivado.setSize(400, 300);
         ventanaChatPrivado.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        if (!chatPrivados.containsKey(usuarioSeleccionado)) {
+            chatPrivados.put(usuarioSeleccionado, new JTextArea());
+        }
         JTextArea areaMensajes = chatPrivados.get(usuarioSeleccionado);
 
         areaMensajes.setEditable(false);
@@ -192,31 +198,30 @@ public class ClienteMedicoGUI extends ClienteGUI {
 
     public void cargarChatPrivado() {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("mensajesPrivados.txt"))) {
-            chatPrivados.clear();
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                String[] partes = linea.split(",", 3);
-                if (partes.length == 3) {
-                    String remitente = partes[0];
-                    String destinatario = partes[1];
-                    String mensaje = partes[2];
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT * FROM mensajePrivado";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
 
-                    if(remitente.equals(usuario.getCorreo())){
-                        if (!chatPrivados.containsKey(destinatario)) {
-                            chatPrivados.put(destinatario, new JTextArea());
-                        }
-                        chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
+            while (rs.next()) {
+                String remitente = rs.getString("remitente");
+                String destinatario = rs.getString("destinatario");
+                String mensaje = rs.getString("mensaje");
+
+                if(remitente.equals(usuario.getCorreo())){
+                    if (!chatPrivados.containsKey(destinatario)) {
+                        chatPrivados.put(destinatario, new JTextArea());
                     }
-                    else if(destinatario.equals(usuario.getCorreo())){
-                        if (!chatPrivados.containsKey(remitente)) {
-                            chatPrivados.put(remitente, new JTextArea());
-                        }
-                        chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
+                    chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
+                }
+                else if(destinatario.equals(usuario.getCorreo())){
+                    if (!chatPrivados.containsKey(remitente)) {
+                        chatPrivados.put(remitente, new JTextArea());
                     }
+                    chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
