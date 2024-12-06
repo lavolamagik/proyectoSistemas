@@ -41,9 +41,10 @@ public class ServidorChat {
     }
 
     private static Usuario obtenerUsuarioDeCliente(Socket socket) {
-        try (Connection connection = DatabaseConnection.getConnection();
-                DataInputStream dataInput = new DataInputStream(socket.getInputStream());
-                DataOutputStream dataOutput = new DataOutputStream(socket.getOutputStream())) {
+        try (Connection connection = DatabaseConnection.getConnection() ){
+
+            DataInputStream dataInput = new DataInputStream(socket.getInputStream());
+            DataOutputStream dataOutput = new DataOutputStream(socket.getOutputStream());
 
             // Leer correo y clave enviados por el cliente
             String correo = dataInput.readUTF();
