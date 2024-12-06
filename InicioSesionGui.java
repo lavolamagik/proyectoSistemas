@@ -85,7 +85,7 @@ public class InicioSesionGui {
 
             System.out.println(response);
             // If response is the user information (not an error), we assign the user
-            if (!response.equals("ERROR: Usuario o contraseña incorrectos.")) {
+            if (!response.contains("ERROR")) {
                 usuario = parseUsuarioFromString(response);
                 frame.dispose();
             } else {

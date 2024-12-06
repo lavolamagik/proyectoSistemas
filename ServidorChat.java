@@ -25,9 +25,6 @@ public class ServidorChat {
                 Socket socket = servidor.accept();
                 if (socket != null && socket.isConnected()) {
                     Usuario usuario = obtenerUsuarioDeCliente(socket);
-                    if(usuario == null) {
-                        continue;
-                    }
                     System.out.println("Usuario: " + usuario);
                     HiloDeCliente cliente = new HiloDeCliente(socket, usuario);
                     clientes.add(cliente);
@@ -42,56 +39,55 @@ public class ServidorChat {
     }
 
     private static Usuario obtenerUsuarioDeCliente(Socket socket) {
-        try (Connection connection = DatabaseConnection.getConnection() ){
-
+        try (Connection connection = DatabaseConnection.getConnection()) {
+    
             DataInputStream dataInput = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutput = new DataOutputStream(socket.getOutputStream());
-
-            // Leer correo y clave enviados por el cliente
-            String correo = dataInput.readUTF();
-            String clave = dataInput.readUTF();
-            System.out.println("Correo: " + correo);
-            System.out.println("Clave: " + clave);
-
-            // Consulta a la base de datos
-            String query = "SELECT * FROM usuarios WHERE correo = ? AND clave = ?";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setString(1, correo);
-            stmt.setString(2, clave);
-            ResultSet rs = stmt.executeQuery();
-
-            // If the user exists, create the corresponding object and send it
-            if (rs.next()) {
-                String tipo = rs.getString("tipo");
-                String nombre = rs.getString("nombre");
-                String rut = rs.getString("rut");
-                String area = rs.getString("area");
-
-                // Crear el objeto de usuario según el tipo
-                Usuario usuario = null;
-                if ("Medico".equals(tipo)) {
-                    usuario = new Medico(nombre, rut, correo, clave);
-                } else if ("Administrativo".equals(tipo)) {
-                    usuario = new Administrativo(nombre, rut, correo, clave, Area.valueOf(area));
-                } else if ("Admin".equals(tipo)) {
-                    usuario = new Admin(nombre, correo, clave);
-                }
-
-                // Enviar el usuario al cliente
-                if (usuario != null) {
-                    dataOutput.writeUTF(usuario.toString());  // Enviar detalles del usuario autenticado
+    
+            while (true) {
+                // Leer correo y clave enviados por el cliente
+                dataOutput.writeUTF("Por favor, ingrese su correo:");
+                String correo = dataInput.readUTF();
+                dataOutput.writeUTF("Por favor, ingrese su clave:");
+                String clave = dataInput.readUTF();
+    
+                System.out.println("Correo: " + correo);
+                System.out.println("Clave: " + clave);
+    
+                // Consulta a la base de datos
+                String query = "SELECT * FROM usuarios WHERE correo = ? AND clave = ?";
+                PreparedStatement stmt = connection.prepareStatement(query);
+                stmt.setString(1, correo);
+                stmt.setString(2, clave);
+                ResultSet rs = stmt.executeQuery();
+    
+                if (rs.next()) {
+                    // Usuario autenticado correctamente
+                    String tipo = rs.getString("tipo");
+                    String nombre = rs.getString("nombre");
+                    String rut = rs.getString("rut");
+                    String area = rs.getString("area");
+    
+                    Usuario usuario = null;
+                    if ("Medico".equals(tipo)) {
+                        usuario = new Medico(nombre, rut, correo, clave);
+                    } else if ("Administrativo".equals(tipo)) {
+                        usuario = new Administrativo(nombre, rut, correo, clave, Area.valueOf(area));
+                    } else if ("Admin".equals(tipo)) {
+                        usuario = new Admin(nombre, correo, clave);
+                    }
+    
+                    dataOutput.writeUTF("Autenticación exitosa. Bienvenido, " + usuario.getNombre() + "!");
                     System.out.println("Usuario autenticado: " + usuario.getCorreo());
+                    return usuario;
                 } else {
-                    dataOutput.writeUTF("ERROR: Usuario no encontrado.");
+                    dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos."); // Send error if no match
                 }
-                return usuario;
-            } else {
-                dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos."); // Send error if no match
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return null; // Devuelve null si no se pudo autenticar
     }
 
 
