@@ -38,6 +38,7 @@ public class ClienteChat {
             } else if (this.usuario.getClass() == Admin.class) {
                 gui = new ClienteAdminGUI(socket, usuario);
             }
+            gui.cargarMensajes(); // Cargar mensajes anteriores
 
             //dataOutput.writeUTF(usuario.toString());
 

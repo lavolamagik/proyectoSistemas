@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
@@ -104,4 +107,18 @@ public class ClienteGUI {
         dialogo.setVisible(true); // Muestra el diálogo
     }
 
+    public void cargarMensajes() {
+        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
+            String query = "SELECT * FROM mensaje";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String mensaje = rs.getString("mensaje");
+                mostrarMensaje(mensaje);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import modelos.Administrativo;
 import modelos.Usuario;
@@ -34,7 +33,6 @@ public class HiloDeCliente implements Runnable {
             e.printStackTrace();
         }
         clientes.add(this);
-        cargarMensajes(); // Cargar mensajes anteriores
         enviarListaUsuarios();
        
     }
@@ -202,18 +200,4 @@ public class HiloDeCliente implements Runnable {
         }
     }
 
-    private void cargarMensajes() {
-        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
-            String query = "SELECT * FROM mensaje";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String mensaje = rs.getString("mensaje");
-                dataOutput.writeUTF(mensaje);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
