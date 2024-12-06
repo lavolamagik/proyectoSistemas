@@ -3,6 +3,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -89,7 +90,10 @@ public class ServidorChat {
                     dataOutput.writeUTF("ERROR: Usuario o contraseña incorrectos."); // Send error if no match
                 }
             }
-        } catch (Exception e) {
+        } catch (SocketException e) {
+            System.out.println("Conexión cerrada abruptamente por el cliente.");
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
         return null; // Devuelve null si no se pudo autenticar
