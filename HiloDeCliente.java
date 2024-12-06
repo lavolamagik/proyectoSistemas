@@ -68,10 +68,8 @@ public class HiloDeCliente implements Runnable {
                         String mensajePrivado = partes[1];
                         for (HiloDeCliente cliente : clientes) {
                             if (cliente.correoUsuario().equals(destinatario)) {
-                                String mensajeParaGuardar = correoUsuario() + ": " + mensajePrivado;
-                                System.out.println("Guardando mensaje: " + mensajeParaGuardar);
-    
-                                guardarMensaje(correoUsuario(), destinatario, mensajePrivado);
+                                String mensajeParaGuardar = "[Privado de " + correoUsuario() + "]: " + mensajePrivado;
+                                guardarMensaje(mensajeParaGuardar);
                                 cliente.dataOutput.writeUTF("[Privado de " + correoUsuario() + "]: " + mensajePrivado);
                                 break;
                             }
@@ -88,7 +86,7 @@ public class HiloDeCliente implements Runnable {
                         if (cliente.usuario.getClass().getSimpleName().equals(destinatario)) {
                             System.out.println("Cliente2: "+cliente.usuario);
         
-                            guardarMensaje(correoUsuario(), destinatario, mensajeGrupo);
+                            
                             if(destinatario.equals("Administrativo")){
                                 Administrativo administrativo = (Administrativo) cliente.usuario;
                                 System.out.println("Administrativo: "+ administrativo);
@@ -96,14 +94,17 @@ public class HiloDeCliente implements Runnable {
                                     continue;
                                 }
                             }
-                        
+                            String mensajeParaGuardar = "[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo;
+                            guardarMensaje(mensajeParaGuardar);
                             cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
                         }
                         else if(destinatario.equals("Auxiliar")){
                             if(cliente.usuario.getClass().getSimpleName().equals("Administrativo")){
                                 Administrativo administrativo = (Administrativo) cliente.usuario;
                                 if(administrativo.esAuxiliar()){
-                                    cliente.dataOutput.writeUTF("[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo);
+                                    String mensajeParaGuardar = "[ "+ correoUsuario() +" para grupo de " + destinatario +"]: " + mensajeGrupo;
+                                    guardarMensaje(mensajeParaGuardar);
+                                    cliente.dataOutput.writeUTF(mensajeParaGuardar);
                                 }
                             }
                         }
@@ -112,7 +113,7 @@ public class HiloDeCliente implements Runnable {
                     // Enviar mensaje general a todos
                     for (HiloDeCliente cliente : clientes) {
 
-                        guardarMensaje(correoUsuario(), "TODOS", mensaje); // Guardar en archivo
+                        guardarMensaje(correoUsuario() + ": " + mensaje); // Guardar en archivo
                         cliente.dataOutput.writeUTF(correoUsuario() + ": " + mensaje);
                     }
                 }
@@ -170,16 +171,15 @@ public class HiloDeCliente implements Runnable {
     
     }
 
-    private void guardarMensaje(String remitente, String destinatario, String mensaje) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "INSERT INTO mensaje (remitente, destinatario, mensaje) VALUES (?, ?, ?)";
+    private void guardarMensaje(String mensaje) {
+        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
+            String query = "INSERT INTO mensaje (mensaje) VALUES (?)";
             PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setString(1, remitente);
-            stmt.setString(2, destinatario);
-            stmt.setString(3, mensaje);
+            stmt.setString(1, mensaje);
             stmt.executeUpdate();
 
-            System.out.println("Mensaje guardado en la base de datos: " + remitente + " para " + destinatario + ": " + mensaje);
+            System.out.println("Mensaje guardado en la base de datos: " + mensaje);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,21 +203,14 @@ public class HiloDeCliente implements Runnable {
     }
 
     private void cargarMensajes() {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
             String query = "SELECT * FROM mensaje";
             PreparedStatement stmt = connection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String remitente = rs.getString("remitente");
-                String destinatario = rs.getString("destinatario");
                 String mensaje = rs.getString("mensaje");
-
-                if (remitente.equals(correoUsuario())) {
-                    dataOutput.writeUTF("[Tú para " + destinatario + "]: " + mensaje);
-                } else if (destinatario.equals(correoUsuario())) {
-                    dataOutput.writeUTF("[" + remitente + " para " + destinatario+ ": " + mensaje);
-                }
+                dataOutput.writeUTF(mensaje);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -197,7 +197,33 @@ public class ClienteMedicoGUI extends ClienteGUI {
     }
 
     public void cargarChatPrivado() {
+        try (Connection connection = DatabaseConnectionCliente.getConnection()) {
+            String query = "SELECT * FROM mensajePrivado WHERE (remitente = ?) OR (destinatario = ?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, usuario.getCorreo());
+            stmt.setString(2, usuario.getCorreo());
+            ResultSet rs = stmt.executeQuery();
 
+            while (rs.next()) {
+                String remitente = rs.getString("remitente");
+                String destinatario = rs.getString("destinatario");
+                String mensaje = rs.getString("mensaje");
+
+                if (remitente.equals(usuario.getCorreo())) {
+                    if (!chatPrivados.containsKey(destinatario)) {
+                        chatPrivados.put(destinatario, new JTextArea());
+                    }
+                    chatPrivados.get(destinatario).append("Tú: " + mensaje + "\n");
+                } else {
+                    if (!chatPrivados.containsKey(remitente)) {
+                        chatPrivados.put(remitente, new JTextArea());
+                    }
+                    chatPrivados.get(remitente).append(remitente + ": " + mensaje + "\n");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
 
     }
